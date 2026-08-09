@@ -1728,3 +1728,5 @@ window.closeMemberModal =
 
 window.showPage =
     showPage;
+window.formResetAttendance =
+   formResetAttendance;
