@@ -1,8 +1,3 @@
-/* =========================================================
-   ABSENSI HARIAN
-   STYLE.CSS
-   ========================================================= */
-
 * {
     margin: 0;
     padding: 0;
@@ -32,9 +27,6 @@
 
     --sidebar-width: 250px;
     --radius: 14px;
-
-    --shadow:
-        0 4px 20px rgba(15, 23, 42, 0.06);
 }
 
 html {
@@ -42,50 +34,105 @@ html {
 }
 
 body {
-    font-family:
-        Inter,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        Roboto,
-        Arial,
-        sans-serif;
-
+    min-height: 100vh;
     background: var(--background);
     color: var(--text);
-    min-height: 100vh;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
 }
 
 
-/* =========================================================
+/* ================================
+   LOADING
+================================ */
+
+.loading-screen {
+    position: fixed;
+    inset: 0;
+
+    z-index: 99999;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    background: #ffffff;
+
+    transition:
+        opacity 0.3s ease,
+        visibility 0.3s ease;
+}
+
+.loading-screen.hide {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.loading-screen p {
+    margin-top: 15px;
+
+    color: #6b7280;
+
+    font-size: 14px;
+}
+
+.loader {
+    width: 48px;
+    height: 48px;
+
+    border: 5px solid #dbeafe;
+    border-top-color: var(--primary);
+
+    border-radius: 50%;
+
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* ================================
    SIDEBAR
-   ========================================================= */
+================================ */
 
 .sidebar {
     position: fixed;
+
     top: 0;
     left: 0;
 
     width: var(--sidebar-width);
     height: 100vh;
 
-    background: var(--white);
-    border-right: 1px solid var(--border);
-
     display: flex;
     flex-direction: column;
 
+    background: #ffffff;
+
+    border-right: 1px solid var(--border);
+
     z-index: 1000;
 
-    transition: transform 0.3s ease;
+    transition:
+        transform 0.3s ease;
 }
 
 .logo {
     display: flex;
     align-items: center;
+
     gap: 12px;
 
-    padding: 24px 20px;
+    padding: 22px 18px;
 
     border-bottom: 1px solid var(--border);
 }
@@ -98,28 +145,28 @@ body {
     align-items: center;
     justify-content: center;
 
-    border-radius: 12px;
-
     background: var(--primary);
+
     color: white;
 
+    border-radius: 12px;
+
     font-size: 22px;
-    font-weight: 700;
+    font-weight: bold;
 }
 
 .logo h2 {
-    font-size: 18px;
-    font-weight: 700;
+    font-size: 17px;
 }
 
 .logo span {
     display: block;
 
-    margin-top: 2px;
+    margin-top: 3px;
 
     color: var(--muted);
 
-    font-size: 11px;
+    font-size: 10px;
 }
 
 .navigation {
@@ -128,33 +175,36 @@ body {
 
     gap: 6px;
 
-    padding: 20px 14px;
+    padding: 18px 12px;
 }
 
 .nav-item {
+    width: 100%;
+
     display: flex;
     align-items: center;
+
     gap: 12px;
 
     padding: 12px 14px;
 
+    border: 0;
+
     border-radius: 10px;
 
+    background: transparent;
+
     color: #4b5563;
-    text-decoration: none;
+
+    font-family: inherit;
 
     font-size: 14px;
-    font-weight: 500;
 
-    transition:
-        background 0.2s ease,
-        color 0.2s ease;
-}
+    text-align: left;
 
-.nav-item span:first-child {
-    width: 22px;
-    text-align: center;
-    font-size: 17px;
+    cursor: pointer;
+
+    transition: 0.2s ease;
 }
 
 .nav-item:hover {
@@ -165,56 +215,62 @@ body {
 .nav-item.active {
     background: #dbeafe;
     color: var(--primary);
+
     font-weight: 600;
+}
+
+.nav-item span:first-child {
+    width: 22px;
+
+    text-align: center;
+
+    font-size: 17px;
 }
 
 .sidebar-footer {
     margin-top: auto;
 
-    padding: 20px;
+    padding: 18px;
+
+    border-top: 1px solid var(--border);
 
     color: var(--muted);
 
-    font-size: 11px;
-
-    border-top: 1px solid var(--border);
+    font-size: 10px;
 }
 
 
-/* =========================================================
+/* ================================
    MAIN
-   ========================================================= */
+================================ */
 
 .main-content {
-    margin-left: var(--sidebar-width);
-
     min-height: 100vh;
 
-    transition: margin-left 0.3s ease;
+    margin-left: var(--sidebar-width);
 }
 
 
-/* =========================================================
+/* ================================
    HEADER
-   ========================================================= */
+================================ */
 
 .header {
     position: sticky;
     top: 0;
 
-    height: 76px;
+    height: 72px;
 
     display: flex;
     align-items: center;
-    justify-content: space-between;
 
-    padding: 0 30px;
+    gap: 15px;
 
-    background: rgba(255, 255, 255, 0.94);
+    padding: 0 28px;
+
+    background: rgba(255, 255, 255, 0.96);
 
     border-bottom: 1px solid var(--border);
-
-    backdrop-filter: blur(12px);
 
     z-index: 500;
 }
@@ -222,17 +278,24 @@ body {
 .menu-button {
     display: none;
 
+    width: 40px;
+    height: 40px;
+
     border: 0;
+
     background: transparent;
 
-    font-size: 25px;
+    font-size: 24px;
 
     cursor: pointer;
 }
 
+.header-title {
+    flex: 1;
+}
+
 .header-title h1 {
-    font-size: 21px;
-    font-weight: 700;
+    font-size: 20px;
 }
 
 .header-title p {
@@ -240,42 +303,37 @@ body {
 
     color: var(--muted);
 
-    font-size: 12px;
-}
-
-.header-right {
-    display: flex;
-    align-items: center;
+    font-size: 11px;
 }
 
 .clock {
-    padding: 8px 13px;
+    padding: 8px 12px;
 
-    border-radius: 9px;
+    border-radius: 8px;
 
     background: #f3f4f6;
 
     color: #374151;
 
-    font-size: 13px;
-    font-weight: 600;
+    font-size: 12px;
+    font-weight: bold;
 
     font-variant-numeric: tabular-nums;
 }
 
 
-/* =========================================================
+/* ================================
    PAGE
-   ========================================================= */
+================================ */
 
 .page {
     display: none;
 
-    padding: 30px;
-
     max-width: 1500px;
 
     margin: auto;
+
+    padding: 28px;
 }
 
 .page.active {
@@ -283,9 +341,9 @@ body {
 }
 
 
-/* =========================================================
+/* ================================
    WELCOME
-   ========================================================= */
+================================ */
 
 .welcome {
     display: flex;
@@ -294,11 +352,9 @@ body {
 
     gap: 20px;
 
-    padding: 26px;
+    padding: 25px;
 
-    margin-bottom: 25px;
-
-    border-radius: var(--radius);
+    margin-bottom: 22px;
 
     background:
         linear-gradient(
@@ -308,30 +364,34 @@ body {
         );
 
     border: 1px solid #dbeafe;
+
+    border-radius: var(--radius);
 }
 
 .welcome h2 {
-    font-size: 23px;
-    margin-bottom: 5px;
+    font-size: 22px;
 }
 
 .welcome p {
+    margin-top: 6px;
+
     color: var(--muted);
-    font-size: 14px;
+
+    font-size: 13px;
 }
 
 
-/* =========================================================
+/* ================================
    BUTTON
-   ========================================================= */
+================================ */
 
 .primary-button,
 .secondary-button {
-    border: 0;
-
     min-height: 40px;
 
-    padding: 0 16px;
+    padding: 0 15px;
+
+    border: 0;
 
     border-radius: 9px;
 
@@ -342,10 +402,7 @@ body {
 
     cursor: pointer;
 
-    transition:
-        transform 0.15s ease,
-        opacity 0.2s ease,
-        background 0.2s ease;
+    transition: 0.2s ease;
 }
 
 .primary-button {
@@ -357,11 +414,6 @@ body {
     background: var(--primary-dark);
 }
 
-.primary-button:active,
-.secondary-button:active {
-    transform: scale(0.97);
-}
-
 .secondary-button {
     background: #f3f4f6;
     color: #374151;
@@ -371,46 +423,52 @@ body {
     background: #e5e7eb;
 }
 
+.primary-button:active,
+.secondary-button:active {
+    transform: scale(0.97);
+}
+
 .full {
     width: 100%;
 }
 
 
-/* =========================================================
-   STATS
-   ========================================================= */
+/* ================================
+   STATISTICS
+================================ */
 
 .stats-grid {
     display: grid;
 
     grid-template-columns:
-        repeat(4, minmax(0, 1fr));
+        repeat(4, 1fr);
 
-    gap: 18px;
+    gap: 16px;
 
-    margin-bottom: 22px;
+    margin-bottom: 20px;
 }
 
 .stat-card {
     display: flex;
     align-items: center;
 
-    gap: 14px;
+    gap: 13px;
 
-    padding: 20px;
+    padding: 18px;
 
-    background: var(--white);
+    background: white;
 
     border: 1px solid var(--border);
 
     border-radius: var(--radius);
 
-    box-shadow: var(--shadow);
+    box-shadow:
+        0 4px 20px rgba(15, 23, 42, 0.05);
 }
 
 .stat-icon {
-    width: 46px;
-    height: 46px;
+    width: 45px;
+    height: 45px;
 
     flex-shrink: 0;
 
@@ -418,10 +476,10 @@ body {
     align-items: center;
     justify-content: center;
 
-    border-radius: 12px;
+    border-radius: 11px;
 
-    font-size: 20px;
-    font-weight: 700;
+    font-size: 19px;
+    font-weight: bold;
 }
 
 .stat-icon.hadir {
@@ -449,7 +507,7 @@ body {
 
     color: var(--muted);
 
-    font-size: 12px;
+    font-size: 11px;
 }
 
 .stat-info strong {
@@ -461,34 +519,32 @@ body {
 }
 
 
-/* =========================================================
+/* ================================
    SUMMARY
-   ========================================================= */
+================================ */
 
 .summary-grid {
     display: grid;
 
     grid-template-columns:
-        repeat(2, minmax(0, 1fr));
+        repeat(2, 1fr);
 
     gap: 18px;
 
-    margin-bottom: 22px;
+    margin-bottom: 20px;
 }
 
-.summary-card,
-.content-card {
-    background: var(--white);
+.summary-card {
+    padding: 21px;
+
+    background: white;
 
     border: 1px solid var(--border);
 
     border-radius: var(--radius);
 
-    box-shadow: var(--shadow);
-}
-
-.summary-card {
-    padding: 22px;
+    box-shadow:
+        0 4px 20px rgba(15, 23, 42, 0.05);
 }
 
 .card-header {
@@ -498,7 +554,7 @@ body {
 
     gap: 15px;
 
-    margin-bottom: 20px;
+    margin-bottom: 18px;
 }
 
 .card-header h3 {
@@ -513,27 +569,29 @@ body {
     font-size: 11px;
 }
 
-.card-icon {
-    font-size: 22px;
-}
-
 .summary-number {
     display: flex;
     align-items: baseline;
 
     gap: 7px;
 
-    margin-bottom: 16px;
+    margin-bottom: 14px;
 }
 
 .summary-number strong {
-    font-size: 32px;
+    font-size: 31px;
 }
 
 .summary-number span {
     color: var(--muted);
-    font-size: 13px;
+
+    font-size: 12px;
 }
+
+
+/* ================================
+   PROGRESS
+================================ */
 
 .progress-container {
     display: flex;
@@ -543,9 +601,9 @@ body {
 }
 
 .progress-bar {
-    height: 8px;
-
     flex: 1;
+
+    height: 8px;
 
     overflow: hidden;
 
@@ -555,7 +613,7 @@ body {
 }
 
 .progress-fill {
-    width: 0%;
+    width: 0;
     height: 100%;
 
     background: var(--primary);
@@ -566,31 +624,39 @@ body {
 }
 
 .progress-container > span {
-    min-width: 38px;
+    min-width: 35px;
 
     color: var(--muted);
 
     font-size: 11px;
-    font-weight: 600;
 
     text-align: right;
 }
 
 
-/* =========================================================
+/* ================================
    CONTENT CARD
-   ========================================================= */
+================================ */
 
 .content-card {
-    padding: 22px;
+    padding: 21px;
 
-    margin-bottom: 22px;
+    margin-bottom: 20px;
+
+    background: white;
+
+    border: 1px solid var(--border);
+
+    border-radius: var(--radius);
+
+    box-shadow:
+        0 4px 20px rgba(15, 23, 42, 0.05);
 }
 
 
-/* =========================================================
+/* ================================
    TABLE
-   ========================================================= */
+================================ */
 
 .table-wrapper {
     width: 100%;
@@ -601,29 +667,28 @@ body {
 table {
     width: 100%;
 
-    border-collapse: collapse;
-
     min-width: 650px;
+
+    border-collapse: collapse;
 }
 
 th,
 td {
-    padding: 13px 12px;
+    padding: 13px 11px;
 
     border-bottom: 1px solid #f0f1f3;
 
     text-align: left;
 
-    font-size: 13px;
+    font-size: 12px;
 }
 
 th {
-    color: #6b7280;
-
     background: #fafafa;
 
-    font-size: 11px;
-    font-weight: 700;
+    color: var(--muted);
+
+    font-size: 10px;
 
     text-transform: uppercase;
 }
@@ -633,7 +698,7 @@ tbody tr:hover {
 }
 
 .empty {
-    padding: 35px 15px;
+    padding: 35px 10px;
 
     color: var(--muted);
 
@@ -641,9 +706,9 @@ tbody tr:hover {
 }
 
 
-/* =========================================================
+/* ================================
    PAGE HEADING
-   ========================================================= */
+================================ */
 
 .page-heading {
     display: flex;
@@ -652,11 +717,11 @@ tbody tr:hover {
 
     gap: 15px;
 
-    margin-bottom: 22px;
+    margin-bottom: 20px;
 }
 
 .page-heading h2 {
-    font-size: 23px;
+    font-size: 22px;
 }
 
 .page-heading p {
@@ -664,31 +729,30 @@ tbody tr:hover {
 
     color: var(--muted);
 
-    font-size: 13px;
+    font-size: 12px;
 }
 
 
-/* =========================================================
+/* ================================
    ATTENDANCE
-   ========================================================= */
+================================ */
 
 .attendance-container {
     display: grid;
 
     grid-template-columns:
-        minmax(0, 1fr)
-        minmax(0, 1fr);
+        repeat(2, minmax(0, 1fr));
 
-    gap: 22px;
+    gap: 20px;
 }
 
 
-/* =========================================================
+/* ================================
    FORM
-   ========================================================= */
+================================ */
 
 .form-group {
-    margin-bottom: 20px;
+    margin-bottom: 18px;
 }
 
 .form-group label {
@@ -698,7 +762,7 @@ tbody tr:hover {
 
     color: #374151;
 
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 600;
 }
 
@@ -707,11 +771,13 @@ select,
 textarea {
     width: 100%;
 
+    padding: 11px 12px;
+
     border: 1px solid #d1d5db;
 
     border-radius: 9px;
 
-    padding: 11px 12px;
+    outline: none;
 
     background: white;
 
@@ -721,11 +787,7 @@ textarea {
 
     font-size: 13px;
 
-    outline: none;
-
-    transition:
-        border-color 0.2s ease,
-        box-shadow 0.2s ease;
+    transition: 0.2s ease;
 }
 
 input:focus,
@@ -742,9 +804,9 @@ textarea {
 }
 
 
-/* =========================================================
-   STATUS OPTIONS
-   ========================================================= */
+/* ================================
+   STATUS
+================================ */
 
 .status-options {
     display: grid;
@@ -752,7 +814,7 @@ textarea {
     grid-template-columns:
         repeat(4, 1fr);
 
-    gap: 10px;
+    gap: 9px;
 }
 
 .status-option {
@@ -768,7 +830,7 @@ textarea {
 }
 
 .status-option span {
-    min-height: 75px;
+    min-height: 72px;
 
     display: flex;
     flex-direction: column;
@@ -782,20 +844,20 @@ textarea {
 
     border-radius: 10px;
 
-    color: #6b7280;
+    color: var(--muted);
 
-    font-size: 20px;
+    font-size: 19px;
 
-    transition: all 0.2s ease;
+    transition: 0.2s ease;
 }
 
 .status-option b {
-    font-size: 11px;
+    font-size: 10px;
 }
 
 .status-option:hover span {
-    border-color: #bfdbfe;
     background: #eff6ff;
+    border-color: #bfdbfe;
 }
 
 .hadir-option input:checked + span {
@@ -823,15 +885,15 @@ textarea {
 }
 
 
-/* =========================================================
+/* ================================
    TODAY LIST
-   ========================================================= */
+================================ */
 
 .today-list {
     display: flex;
     flex-direction: column;
 
-    gap: 10px;
+    gap: 9px;
 }
 
 .today-item {
@@ -839,9 +901,9 @@ textarea {
     align-items: center;
     justify-content: space-between;
 
-    gap: 12px;
+    gap: 10px;
 
-    padding: 13px;
+    padding: 12px;
 
     border: 1px solid #f0f1f3;
 
@@ -856,8 +918,8 @@ textarea {
 }
 
 .avatar {
-    width: 36px;
-    height: 36px;
+    width: 37px;
+    height: 37px;
 
     display: flex;
     align-items: center;
@@ -869,25 +931,30 @@ textarea {
 
     color: var(--primary);
 
-    font-size: 13px;
-    font-weight: 700;
+    font-size: 11px;
+    font-weight: bold;
 }
 
 .today-member strong {
     display: block;
 
-    font-size: 13px;
+    font-size: 12px;
 }
 
 .today-member small {
     display: block;
 
-    margin-top: 2px;
+    margin-top: 3px;
 
     color: var(--muted);
 
     font-size: 10px;
 }
+
+
+/* ================================
+   BADGE
+================================ */
 
 .status-badge {
     display: inline-flex;
@@ -897,8 +964,8 @@ textarea {
 
     border-radius: 20px;
 
-    font-size: 10px;
-    font-weight: 700;
+    font-size: 9px;
+    font-weight: bold;
 }
 
 .status-badge.hadir {
@@ -921,6 +988,11 @@ textarea {
     color: var(--red);
 }
 
+
+/* ================================
+   EMPTY
+================================ */
+
 .empty-state {
     padding: 35px 15px;
 
@@ -928,9 +1000,9 @@ textarea {
 }
 
 .empty-icon {
-    font-size: 35px;
+    margin-bottom: 9px;
 
-    margin-bottom: 10px;
+    font-size: 35px;
 }
 
 .empty-state h3 {
@@ -942,61 +1014,63 @@ textarea {
 
     color: var(--muted);
 
-    font-size: 11px;
+    font-size: 10px;
 }
 
 
-/* =========================================================
+/* ================================
    FILTER
-   ========================================================= */
+================================ */
 
 .filter-card {
     display: grid;
 
     grid-template-columns:
-        repeat(2, minmax(0, 1fr));
+        repeat(2, 1fr);
 
     gap: 18px;
 
     padding: 20px;
 
-    margin-bottom: 22px;
+    margin-bottom: 20px;
 
-    background: var(--white);
+    background: white;
 
     border: 1px solid var(--border);
 
     border-radius: var(--radius);
 
-    box-shadow: var(--shadow);
+    box-shadow:
+        0 4px 20px rgba(15, 23, 42, 0.05);
 }
 
 
-/* =========================================================
-   RECAP STATS
-   ========================================================= */
+/* ================================
+   RECAP
+================================ */
 
 .recap-stats {
     display: grid;
 
     grid-template-columns:
-        repeat(5, minmax(0, 1fr));
+        repeat(5, 1fr);
 
-    gap: 15px;
+    gap: 13px;
 
-    margin-bottom: 22px;
+    margin-bottom: 20px;
 }
 
 .recap-card {
-    padding: 18px;
+    padding: 17px;
 
-    background: var(--white);
+    background: white;
 
     border: 1px solid var(--border);
 
-    border-radius: 12px;
+    border-radius: 11px;
 
-    box-shadow: var(--shadow);
+    box-shadow:
+        0 4px 20px rgba(15, 23, 42, 0.05);
 }
 
 .recap-card span {
@@ -1004,38 +1078,37 @@ textarea {
 
     color: var(--muted);
 
-    font-size: 11px;
+    font-size: 10px;
 }
 
 .recap-card strong {
     display: block;
 
-    margin-top: 7px;
+    margin-top: 6px;
 
-    font-size: 25px;
+    font-size: 23px;
 }
 
 
-/* =========================================================
+/* ================================
    MODAL
-   ========================================================= */
+================================ */
 
 .modal {
     position: fixed;
 
     inset: 0;
 
+    z-index: 3000;
+
     display: none;
+
     align-items: center;
     justify-content: center;
 
     padding: 20px;
 
     background: rgba(15, 23, 42, 0.55);
-
-    z-index: 3000;
-
-    backdrop-filter: blur(3px);
 }
 
 .modal.show {
@@ -1044,9 +1117,9 @@ textarea {
 
 .modal-content {
     width: 100%;
-    max-width: 450px;
+    max-width: 430px;
 
-    padding: 24px;
+    padding: 23px;
 
     background: white;
 
@@ -1054,32 +1127,19 @@ textarea {
 
     box-shadow:
         0 20px 60px rgba(0, 0, 0, 0.2);
-
-    animation: modalIn 0.2s ease;
-}
-
-@keyframes modalIn {
-    from {
-        opacity: 0;
-        transform: translateY(15px) scale(0.98);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
 }
 
 .modal-header {
     display: flex;
-    align-items: flex-start;
     justify-content: space-between;
 
-    margin-bottom: 22px;
+    gap: 15px;
+
+    margin-bottom: 20px;
 }
 
 .modal-header h3 {
-    font-size: 18px;
+    font-size: 17px;
 }
 
 .modal-header p {
@@ -1087,7 +1147,7 @@ textarea {
 
     color: var(--muted);
 
-    font-size: 11px;
+    font-size: 10px;
 }
 
 .close-button {
@@ -1100,15 +1160,9 @@ textarea {
 
     background: #f3f4f6;
 
-    color: #4b5563;
-
-    font-size: 22px;
+    font-size: 21px;
 
     cursor: pointer;
-}
-
-.close-button:hover {
-    background: #e5e7eb;
 }
 
 .modal-actions {
@@ -1117,62 +1171,60 @@ textarea {
 
     gap: 10px;
 
-    margin-top: 25px;
+    margin-top: 22px;
 }
 
 
-/* =========================================================
+/* ================================
    TOAST
-   ========================================================= */
+================================ */
 
 .toast {
     position: fixed;
 
-    right: 25px;
-    bottom: 25px;
+    right: 20px;
+    bottom: 20px;
 
-    min-width: 290px;
+    min-width: 280px;
 
     display: flex;
     align-items: center;
 
-    gap: 12px;
+    gap: 11px;
 
-    padding: 13px 15px;
+    padding: 13px;
 
     background: white;
 
     border: 1px solid var(--border);
 
-    border-radius: 12px;
+    border-radius: 11px;
 
     box-shadow:
         0 12px 35px rgba(15, 23, 42, 0.15);
 
     z-index: 5000;
 
-    transform: translateY(130px);
-
     opacity: 0;
+
+    transform: translateY(100px);
 
     pointer-events: none;
 
-    transition:
-        transform 0.3s ease,
-        opacity 0.3s ease;
+    transition: 0.3s ease;
 }
 
 .toast.show {
-    transform: translateY(0);
-
     opacity: 1;
+
+    transform: translateY(0);
 
     pointer-events: auto;
 }
 
 .toast-icon {
-    width: 35px;
-    height: 35px;
+    width: 34px;
+    height: 34px;
 
     display: flex;
     align-items: center;
@@ -1184,195 +1236,10 @@ textarea {
 
     color: var(--green);
 
-    font-weight: 700;
+    font-weight: bold;
 }
 
 .toast strong {
     display: block;
 
-    font-size: 12px;
-}
-
-.toast p {
-    margin-top: 3px;
-
-    color: var(--muted);
-
-    font-size: 10px;
-}
-
-#closeToast {
-    margin-left: auto;
-
-    border: 0;
-
-    background: transparent;
-
-    color: #9ca3af;
-
-    font-size: 18px;
-
-    cursor: pointer;
-}
-
-
-/* =========================================================
-   LOADING
-   ========================================================= */
-
-.loading-screen {
-    position: fixed;
-
-    inset: 0;
-
-    display: flex;
-    flex-direction: column;
-
-    align-items: center;
-    justify-content: center;
-
-    gap: 12px;
-
-    background: white;
-
-    z-index: 9999;
-
-    transition: opacity 0.3s ease;
-}
-
-.loading-screen.hide {
-    opacity: 0;
-
-    pointer-events: none;
-}
-
-.loading-screen p {
-    color: var(--muted);
-
-    font-size: 12px;
-}
-
-.loader {
-    width: 35px;
-    height: 35px;
-
-    border: 3px solid #dbeafe;
-
-    border-top-color: var(--primary);
-
-    border-radius: 50%;
-
-    animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-
-/* =========================================================
-   DELETE BUTTON
-   ========================================================= */
-
-.delete-button {
-    border: 0;
-
-    padding: 7px 10px;
-
-    border-radius: 7px;
-
-    background: var(--red-bg);
-
-    color: var(--red);
-
-    font-size: 11px;
-    font-weight: 600;
-
-    cursor: pointer;
-}
-
-.delete-button:hover {
-    background: #fecaca;
-}
-
-.edit-button {
-    border: 0;
-
-    padding: 7px 10px;
-
-    border-radius: 7px;
-
-    background: #dbeafe;
-
-    color: var(--primary);
-
-    font-size: 11px;
-    font-weight: 600;
-
-    cursor: pointer;
-}
-
-
-/* =========================================================
-   RESPONSIVE TABLET
-   ========================================================= */
-
-@media (max-width: 1100px) {
-
-    .stats-grid {
-        grid-template-columns:
-            repeat(2, minmax(0, 1fr));
-    }
-
-    .recap-stats {
-        grid-template-columns:
-            repeat(3, minmax(0, 1fr));
-    }
-
-    .attendance-container {
-        grid-template-columns: 1fr;
-    }
-}
-
-
-/* =========================================================
-   RESPONSIVE MOBILE
-   ========================================================= */
-
-@media (max-width: 768px) {
-
-    :root {
-        --sidebar-width: 250px;
-    }
-
-    .sidebar {
-        transform: translateX(-100%);
-    }
-
-    .sidebar.open {
-        transform: translateX(0);
-    }
-
-    .main-content {
-        margin-left: 0;
-    }
-
-    .menu-button {
-        display: block;
-    }
-
-    .header {
-        height: 68px;
-
-        padding: 0 16px;
-
-        gap: 12px;
-    }
-
-    .header-title {
-        flex: 1;
-    }
-
-    .header-title h
+    font
