@@ -1,96 +1,181 @@
 "use strict";
 
 /* =========================================================
-   ABSEN 577 — SCRIPT.JS
-   Penyimpanan: LocalStorage
-   Fitur:
-   - Absensi harian
-   - Rekap mingguan
-   - Rekap bulanan
-   - Data anggota
-   - Tambah/hapus anggota
-   - Filter tanggal
-   - Export CSV
-   - Dashboard
-   - Responsive mobile
+   ABSEN 577 — SCRIPT.JS FINAL
 ========================================================= */
 
+const MEMBERS_KEY = "absen577_members";
+const ATTENDANCE_KEY = "absen577_attendance";
 
-/* =========================================================
-   STORAGE
-========================================================= */
-
-const STORAGE_MEMBERS = "absen577_members_v3";
-const STORAGE_ATTENDANCE = "absen577_attendance_v3";
-
-
-/* =========================================================
-   DEFAULT DATA
-========================================================= */
-
-const defaultMembers = [
+let members = load(MEMBERS_KEY, [
     {
-        id: "member_1",
+        id: "member-default",
         name: "Rivano"
     }
-];
+]);
+
+let attendance = load(ATTENDANCE_KEY, []);
+
+let toastTimer;
 
 
 /* =========================================================
-   STATE
+   HELPER
 ========================================================= */
 
-let members = loadData(
-    STORAGE_MEMBERS,
-    defaultMembers
-);
+const $ = (selector) => document.querySelector(selector);
 
-let attendance = loadData(
-    STORAGE_ATTENDANCE,
-    []
-);
+const $$ = (selector) => document.querySelectorAll(selector);
 
-let currentPage = "dashboard";
+
+function load(key, fallback) {
+    try {
+        const data = localStorage.getItem(key);
+
+        if (!data) {
+            return fallback;
+        }
+
+        return JSON.parse(data);
+
+    } catch (error) {
+        console.error("Storage error:", error);
+        return fallback;
+    }
+}
+
+
+function save(key, data) {
+    localStorage.setItem(
+        key,
+        JSON.stringify(data)
+    );
+}
+
+
+function createId() {
+    return (
+        Date.now().toString(36) +
+        Math.random().toString(36).substring(2, 9)
+    );
+}
+
+
+function today() {
+    const date = new Date();
+
+    const year = date.getFullYear();
+
+    const month = String(
+        date.getMonth() + 1
+    ).padStart(2, "0");
+
+    const day = String(
+        date.getDate()
+    ).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+}
+
+
+function currentMonth() {
+    return today().substring(0, 7);
+}
+
+
+function escapeHTML(value) {
+    return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+
+function formatDate(dateString) {
+    if (!dateString) return "-";
+
+    const date = new Date(
+        `${dateString}T00:00:00`
+    );
+
+    if (Number.isNaN(date.getTime())) {
+        return dateString;
+    }
+
+    return date.toLocaleDateString(
+        "id-ID",
+        {
+            weekday: "short",
+            day: "numeric",
+            month: "short",
+            year: "numeric"
+        }
+    );
+}
+
+
+function statusName(status) {
+
+    const names = {
+        hadir: "Hadir",
+        izin: "Izin",
+        sakit: "Sakit",
+        alpa: "Alpa"
+    };
+
+    return names[status] || status;
+}
+
+
+function initials(name) {
+
+    return name
+        .trim()
+        .split(/\s+/)
+        .slice(0, 2)
+        .map(word =>
+            word.charAt(0).toUpperCase()
+        )
+        .join("");
+}
+
+
+function setText(selector, value) {
+
+    const element = $(selector);
+
+    if (element) {
+        element.textContent = value;
+    }
+
+}
 
 
 /* =========================================================
-   DOM HELPER
-========================================================= */
-
-const $ = (selector) =>
-    document.querySelector(selector);
-
-const $$ = (selector) =>
-    document.querySelectorAll(selector);
-
-
-/* =========================================================
-   INITIALIZATION
+   START
 ========================================================= */
 
 document.addEventListener(
     "DOMContentLoaded",
     () => {
 
-        initializeNavigation();
+        initNavigation();
 
-        initializeMobileMenu();
+        initMobileMenu();
 
-        initializeAttendanceForm();
+        initAttendance();
 
-        initializeMemberForm();
+        initMembers();
 
-        initializeMemberModal();
+        initFilters();
 
-        initializeFilters();
+        initExport();
 
-        initializeExport();
+        initToast();
 
-        initializeToast();
-
-        updateDate();
-
-        updateClock();
+        setDefaultDates();
 
         renderAll();
 
@@ -110,275 +195,210 @@ document.addEventListener(
 
 
 /* =========================================================
-   STORAGE FUNCTIONS
-========================================================= */
-
-function loadData(key, fallback) {
-
-    try {
-
-        const data =
-            localStorage.getItem(key);
-
-        if (!data) {
-            return fallback;
-        }
-
-        const parsed =
-            JSON.parse(data);
-
-        return parsed;
-
-    } catch (error) {
-
-        console.error(
-            "Gagal membaca storage:",
-            error
-        );
-
-        return fallback;
-    }
-}
-
-
-function saveData(key, data) {
-
-    try {
-
-        localStorage.setItem(
-            key,
-            JSON.stringify(data)
-        );
-
-    } catch (error) {
-
-        console.error(
-            "Gagal menyimpan data:",
-            error
-        );
-
-        showToast(
-            "Gagal",
-            "Data tidak dapat disimpan."
-        );
-    }
-}
-
-
-/* =========================================================
    NAVIGATION
 ========================================================= */
 
-function initializeNavigation() {
+function initNavigation() {
 
-    $$(".nav-item").forEach(button => {
+    $$(".nav-item[data-page]")
+        .forEach(button => {
 
-        button.addEventListener(
-            "click",
-            () => {
+            button.addEventListener(
+                "click",
+                () => {
 
-                const page =
-                    button.dataset.page;
+                    openPage(
+                        button.dataset.page
+                    );
 
-                if (!page) return;
+                    closeSidebar();
 
-                openPage(page);
+                }
+            );
 
-                closeSidebar();
-
-            }
-        );
-
-    });
+        });
 
 }
 
 
 function openPage(page) {
 
-    currentPage = page;
+    $$(".nav-item[data-page]")
+        .forEach(button => {
 
-    $$(".nav-item").forEach(item => {
+            button.classList.toggle(
+                "active",
+                button.dataset.page === page
+            );
 
-        item.classList.toggle(
-            "active",
-            item.dataset.page === page
-        );
-
-    });
-
-
-    $$(".page").forEach(section => {
-
-        section.classList.toggle(
-            "active",
-            section.id === `page-${page}`
-        );
-
-    });
+        });
 
 
-    const titleMap = {
+    $$(".page")
+        .forEach(section => {
 
-        dashboard: "Dashboard",
+            section.classList.toggle(
+                "active",
+                section.id === `page-${page}`
+            );
 
-        attendance: "Absensi Harian",
-
-        weekly: "Rekap Mingguan",
-
-        monthly: "Rekap Bulanan",
-
-        members: "Data Anggota"
-
-    };
+        });
 
 
-    const subtitleMap = {
+    const titles = {
 
-        dashboard:
-            "Pantau kehadiran anggota dengan mudah.",
+        dashboard: [
+            "Dashboard",
+            "Pantau kehadiran anggota dengan mudah."
+        ],
 
-        attendance:
-            "Catat kehadiran anggota hari ini.",
+        attendance: [
+            "Absensi Harian",
+            "Catat kehadiran anggota setiap hari."
+        ],
 
-        weekly:
-            "Lihat total kehadiran dalam satu minggu.",
+        weekly: [
+            "Rekap Mingguan",
+            "Rekap kehadiran selama 7 hari terakhir."
+        ],
 
-        monthly:
-            "Lihat total kehadiran dalam satu bulan.",
+        monthly: [
+            "Rekap Bulanan",
+            "Lihat statistik kehadiran setiap bulan."
+        ],
 
-        members:
-            "Kelola daftar anggota absensi."
+        members: [
+            "Data Anggota",
+            "Kelola daftar anggota yang mengikuti absensi."
+        ]
 
     };
 
 
-    const title =
-        $("#topbarTitle");
-
-    const subtitle =
-        $("#topbarSubtitle");
+    const data =
+        titles[page] ||
+        titles.dashboard;
 
 
-    if (title) {
+    setText(
+        "#topbarTitle",
+        data[0]
+    );
 
-        title.textContent =
-            titleMap[page] ||
-            "Absensi 577";
-
-    }
-
-
-    if (subtitle) {
-
-        subtitle.textContent =
-            subtitleMap[page] ||
-            "";
-
-    }
+    setText(
+        "#topbarSubtitle",
+        data[1]
+    );
 
 
     if (page === "dashboard") {
-
         renderDashboard();
-
     }
 
     if (page === "attendance") {
-
-        renderAttendancePage();
-
+        renderAttendance();
     }
 
     if (page === "weekly") {
-
         renderWeekly();
-
     }
 
     if (page === "monthly") {
-
         renderMonthly();
-
     }
 
     if (page === "members") {
-
         renderMembers();
-
     }
 
 }
 
 
 /* =========================================================
-   MOBILE MENU
+   MOBILE
 ========================================================= */
 
-function initializeMobileMenu() {
+function initMobileMenu() {
 
-    const menuButton =
+    const button =
         $("#menuButton");
 
-    const sidebar =
-        $(".sidebar");
+    button?.addEventListener(
+        "click",
+        () => {
 
-    const overlay =
-        $(".sidebar-overlay");
+            $(".sidebar")
+                ?.classList.add("open");
 
+            $(".sidebar-overlay")
+                ?.classList.add("show");
 
-    if (menuButton) {
-
-        menuButton.addEventListener(
-            "click",
-            () => {
-
-                sidebar?.classList.add("open");
-
-                overlay?.classList.add("show");
-
-            }
-        );
-
-    }
+        }
+    );
 
 
-    if (overlay) {
-
-        overlay.addEventListener(
+    $(".sidebar-overlay")
+        ?.addEventListener(
             "click",
             closeSidebar
         );
-
-    }
 
 }
 
 
 function closeSidebar() {
 
-    $(".sidebar")?.classList.remove(
-        "open"
-    );
+    $(".sidebar")
+        ?.classList.remove("open");
 
-    $(".sidebar-overlay")?.classList.remove(
-        "show"
-    );
+    $(".sidebar-overlay")
+        ?.classList.remove("show");
 
 }
 
 
 /* =========================================================
-   DATE & CLOCK
+   DATE / CLOCK
 ========================================================= */
+
+function setDefaultDates() {
+
+    const dateInput =
+        $("#attendanceDate");
+
+    if (dateInput) {
+        dateInput.value = today();
+    }
+
+
+    const filterDate =
+        $("#filterDate");
+
+    if (filterDate) {
+        filterDate.value = today();
+    }
+
+
+    const filterMonth =
+        $("#filterMonth");
+
+    if (filterMonth) {
+        filterMonth.value = currentMonth();
+    }
+
+
+    updateDate();
+
+    updateClock();
+
+}
+
 
 function updateDate() {
 
-    const now =
-        new Date();
-
-    const formatted =
-        now.toLocaleDateString(
+    setText(
+        "#currentDate",
+        new Date().toLocaleDateString(
             "id-ID",
             {
                 weekday: "long",
@@ -386,60 +406,37 @@ function updateDate() {
                 month: "long",
                 year: "numeric"
             }
-        );
+        )
+    );
 
 
-    const elements = [
-        "#currentDate",
+    setText(
         "#todayDate",
-        "#attendanceDate"
-    ];
-
-
-    elements.forEach(selector => {
-
-        const element =
-            $(selector);
-
-        if (element) {
-
-            if (
-                element.tagName ===
-                "INPUT"
-            ) {
-
-                element.value =
-                    getLocalDate();
-
-            } else {
-
-                element.textContent =
-                    formatted;
-
+        new Date().toLocaleDateString(
+            "id-ID",
+            {
+                weekday: "long",
+                day: "numeric",
+                month: "long",
+                year: "numeric"
             }
-
-        }
-
-    });
+        )
+    );
 
 }
 
 
 function updateClock() {
 
-    const clock =
-        $("#clock");
+    const clock = $("#clock");
 
     if (!clock) return;
 
 
     function tick() {
 
-        const now =
-            new Date();
-
         clock.textContent =
-            now.toLocaleTimeString(
+            new Date().toLocaleTimeString(
                 "id-ID",
                 {
                     hour: "2-digit",
@@ -461,31 +458,11 @@ function updateClock() {
 }
 
 
-function getLocalDate(date = new Date()) {
-
-    const year =
-        date.getFullYear();
-
-    const month =
-        String(
-            date.getMonth() + 1
-        ).padStart(2, "0");
-
-    const day =
-        String(
-            date.getDate()
-        ).padStart(2, "0");
-
-
-    return `${year}-${month}-${day}`;
-}
-
-
 /* =========================================================
-   ATTENDANCE FORM
+   ATTENDANCE
 ========================================================= */
 
-function initializeAttendanceForm() {
+function initAttendance() {
 
     const form =
         $("#attendanceForm");
@@ -495,42 +472,21 @@ function initializeAttendanceForm() {
 
     form.addEventListener(
         "submit",
-        event => {
-
-            event.preventDefault();
-
-            saveAttendance();
-
-        }
+        handleAttendanceSubmit
     );
 
 
-    const dateInput =
-        $("#attendanceDate");
-
-    if (dateInput) {
-
-        dateInput.value =
-            getLocalDate();
-
-    }
-
-
-    populateMemberSelect();
+    populateMembers();
 
 }
 
 
-function populateMemberSelect() {
+function populateMembers() {
 
     const select =
         $("#attendanceMember");
 
     if (!select) return;
-
-
-    const currentValue =
-        select.value;
 
 
     select.innerHTML = `
@@ -543,9 +499,7 @@ function populateMemberSelect() {
     members.forEach(member => {
 
         const option =
-            document.createElement(
-                "option"
-            );
+            document.createElement("option");
 
         option.value =
             member.id;
@@ -553,62 +507,54 @@ function populateMemberSelect() {
         option.textContent =
             member.name;
 
-        select.appendChild(
-            option
-        );
+        select.appendChild(option);
 
     });
-
-
-    if (currentValue) {
-
-        select.value =
-            currentValue;
-
-    }
 
 }
 
 
-function saveAttendance() {
+function handleAttendanceSubmit(event) {
 
-    const memberSelect =
-        $("#attendanceMember");
+    event.preventDefault();
 
-    const dateInput =
-        $("#attendanceDate");
 
-    const noteInput =
-        $("#attendanceNote");
+    const date =
+        $("#attendanceDate")?.value;
 
 
     const memberId =
-        memberSelect?.value;
-
-    const date =
-        dateInput?.value ||
-        getLocalDate();
-
-    const note =
-        noteInput?.value.trim() ||
-        "";
-
-
-    const statusInput =
-        document.querySelector(
-            'input[name="status"]:checked'
-        );
+        $("#attendanceMember")?.value;
 
 
     const status =
-        statusInput?.value;
+        document.querySelector(
+            'input[name="status"]:checked'
+        )?.value;
+
+
+    const note =
+        $("#attendanceNote")?.value.trim() || "";
+
+
+    /* VALIDASI */
+
+    if (!date) {
+
+        showToast(
+            "Perhatian",
+            "Tanggal belum dipilih."
+        );
+
+        return;
+    }
 
 
     if (!memberId) {
 
         showToast(
             "Perhatian",
-            "Silakan pilih anggota terlebih dahulu."
+            "Silakan pilih anggota."
         );
 
         return;
@@ -643,6 +589,14 @@ function saveAttendance() {
         return;
     }
 
+
+    /*
+       CEK ABSEN HARI INI
+
+       Kalau sudah ada:
+       data akan diperbarui,
+       bukan membuat duplikat.
+    */
 
     const existingIndex =
         attendance.findIndex(
@@ -681,25 +635,92 @@ function saveAttendance() {
         attendance[existingIndex] =
             record;
 
+
         showToast(
-            "Diperbarui",
-            `${member.name} berhasil diperbarui.`
+            "Absensi diperbarui",
+            `${member.name} pada ${formatDate(date)} diperbarui.`
         );
 
     } else {
 
         attendance.push(record);
 
+
         showToast(
-            "Berhasil",
+            "Absensi berhasil",
             `${member.name} berhasil diabsen.`
         );
 
     }
 
 
-    saveData(
-        STORAGE_ATTENDANCE,
+    save(
+        ATTENDANCE_KEY,
+        attendance
+    );
+
+
+    resetAttendanceForm();
+
+    renderAll();
+
+}
+
+
+function resetAttendanceForm() {
+
+    const form =
+        $("#attendanceForm");
+
+    if (form) {
+        form.reset();
+    }
+
+
+    const dateInput =
+        $("#attendanceDate");
+
+    if (dateInput) {
+        dateInput.value = today();
+    }
+
+}
+
+
+/* =========================================================
+   DELETE ATTENDANCE
+========================================================= */
+
+function deleteAttendance(id) {
+
+    const record =
+        attendance.find(
+            item =>
+                item.id === id
+        );
+
+
+    if (!record) return;
+
+
+    const yes =
+        confirm(
+            `Hapus absensi ${record.memberName} pada ${formatDate(record.date)}?`
+        );
+
+
+    if (!yes) return;
+
+
+    attendance =
+        attendance.filter(
+            item =>
+                item.id !== id
+        );
+
+
+    save(
+        ATTENDANCE_KEY,
         attendance
     );
 
@@ -707,44 +728,63 @@ function saveAttendance() {
     renderAll();
 
 
-    if (formResetSafe()) {
-
-        $("#attendanceForm").reset();
-
-        if ($("#attendanceDate")) {
-
-            $("#attendanceDate").value =
-                getLocalDate();
-
-        }
-
-    }
+    showToast(
+        "Berhasil",
+        "Data absensi telah dihapus."
+    );
 
 }
 
 
 /* =========================================================
-   MEMBER FORM
+   MEMBERS
 ========================================================= */
 
-function initializeMemberForm() {
+function initMembers() {
 
-    const form =
-        $("#memberForm");
+    $("#memberForm")
+        ?.addEventListener(
+            "submit",
+            event => {
 
-    if (!form) return;
+                event.preventDefault();
+
+                addMember();
+
+            }
+        );
 
 
-    form.addEventListener(
-        "submit",
-        event => {
+    $("#addMemberButton")
+        ?.addEventListener(
+            "click",
+            openMemberModal
+        );
 
-            event.preventDefault();
 
-            addMember();
+    $("#closeMemberModal")
+        ?.addEventListener(
+            "click",
+            closeMemberModal
+        );
 
-        }
-    );
+
+    $("#memberModal")
+        ?.addEventListener(
+            "click",
+            event => {
+
+                if (
+                    event.target.id ===
+                    "memberModal"
+                ) {
+
+                    closeMemberModal();
+
+                }
+
+            }
+        );
 
 }
 
@@ -753,6 +793,7 @@ function addMember() {
 
     const input =
         $("#memberName");
+
 
     if (!input) return;
 
@@ -769,11 +810,10 @@ function addMember() {
         );
 
         return;
-
     }
 
 
-    const duplicate =
+    const exists =
         members.some(
             member =>
                 member.name.toLowerCase() ===
@@ -781,33 +821,28 @@ function addMember() {
         );
 
 
-    if (duplicate) {
+    if (exists) {
 
         showToast(
             "Perhatian",
-            "Nama anggota sudah ada."
+            "Anggota dengan nama tersebut sudah ada."
         );
 
         return;
-
     }
 
 
-    const member = {
+    members.push({
 
-        id:
-            createId(),
+        id: createId(),
 
         name
 
-    };
+    });
 
 
-    members.push(member);
-
-
-    saveData(
-        STORAGE_MEMBERS,
+    save(
+        MEMBERS_KEY,
         members
     );
 
@@ -815,10 +850,9 @@ function addMember() {
     input.value = "";
 
 
-    populateMemberSelect();
+    populateMembers();
 
     renderAll();
-
 
     closeMemberModal();
 
@@ -831,57 +865,16 @@ function addMember() {
 }
 
 
-/* =========================================================
-   MEMBER MODAL
-========================================================= */
+function openMemberModal() {
 
-function initializeMemberModal() {
-
-    const addButton =
-        $("#addMemberButton");
-
-    const modal =
-        $("#memberModal");
-
-    const closeButton =
-        $("#closeMemberModal");
+    $("#memberModal")
+        ?.classList.add("show");
 
 
-    addButton?.addEventListener(
-        "click",
-        () => {
-
-            modal?.classList.add("show");
-
-            setTimeout(
-                () =>
-                    $("#memberName")?.focus(),
-                100
-            );
-
-        }
-    );
-
-
-    closeButton?.addEventListener(
-        "click",
-        closeMemberModal
-    );
-
-
-    modal?.addEventListener(
-        "click",
-        event => {
-
-            if (
-                event.target === modal
-            ) {
-
-                closeMemberModal();
-
-            }
-
-        }
+    setTimeout(
+        () =>
+            $("#memberName")?.focus(),
+        100
     );
 
 }
@@ -889,16 +882,11 @@ function initializeMemberModal() {
 
 function closeMemberModal() {
 
-    $("#memberModal")?.classList.remove(
-        "show"
-    );
+    $("#memberModal")
+        ?.classList.remove("show");
 
 }
 
-
-/* =========================================================
-   DELETE MEMBER
-========================================================= */
 
 function deleteMember(id) {
 
@@ -912,13 +900,13 @@ function deleteMember(id) {
     if (!member) return;
 
 
-    const confirmed =
+    const yes =
         confirm(
-            `Hapus anggota "${member.name}"?\n\nData absensi anggota juga akan dihapus.`
+            `Hapus anggota "${member.name}"?\n\nSemua data absensinya juga akan dihapus.`
         );
 
 
-    if (!confirmed) return;
+    if (!yes) return;
 
 
     members =
@@ -935,19 +923,19 @@ function deleteMember(id) {
         );
 
 
-    saveData(
-        STORAGE_MEMBERS,
+    save(
+        MEMBERS_KEY,
         members
     );
 
 
-    saveData(
-        STORAGE_ATTENDANCE,
+    save(
+        ATTENDANCE_KEY,
         attendance
     );
 
 
-    populateMemberSelect();
+    populateMembers();
 
     renderAll();
 
@@ -964,33 +952,20 @@ function deleteMember(id) {
    FILTER
 ========================================================= */
 
-function initializeFilters() {
+function initFilters() {
 
-    const dateFilter =
-        $("#filterDate");
-
-    const monthFilter =
-        $("#filterMonth");
-
-
-    dateFilter?.addEventListener(
-        "change",
-        () => {
-
-            renderAttendancePage();
-
-        }
-    );
+    $("#filterDate")
+        ?.addEventListener(
+            "change",
+            renderAttendance
+        );
 
 
-    monthFilter?.addEventListener(
-        "change",
-        () => {
-
-            renderMonthly();
-
-        }
-    );
+    $("#filterMonth")
+        ?.addEventListener(
+            "change",
+            renderMonthly
+        );
 
 }
 
@@ -1001,70 +976,46 @@ function initializeFilters() {
 
 function renderDashboard() {
 
-    const today =
-        getLocalDate();
-
-
-    const todayRecords =
+    const records =
         attendance.filter(
             item =>
-                item.date === today
+                item.date === today()
         );
 
 
-    const counts =
-        countStatuses(
-            todayRecords
-        );
+    const count =
+        countStatuses(records);
 
 
     setText(
         "#totalHadir",
-        counts.hadir
+        count.hadir
     );
 
     setText(
         "#totalIzin",
-        counts.izin
+        count.izin
     );
 
     setText(
         "#totalSakit",
-        counts.sakit
+        count.sakit
     );
 
     setText(
         "#totalAlpa",
-        counts.alpa
+        count.alpa
     );
-
-
-    const total =
-        members.length;
-
-
-    const present =
-        counts.hadir;
 
 
     const percentage =
-        total > 0
+        members.length > 0
             ? Math.round(
-                (present / total) * 100
+                (count.hadir /
+                    members.length) *
+                100
             )
             : 0;
-
-
-    setText(
-        "#weeklyTotal",
-        getPeriodTotal(7)
-    );
-
-
-    setText(
-        "#monthlyTotal",
-        getMonthlyTotal()
-    );
 
 
     setText(
@@ -1080,23 +1031,73 @@ function renderDashboard() {
     if (progress) {
 
         progress.style.width =
-            `${percentage}%`;
+            `${Math.min(percentage, 100)}%`;
 
     }
 
 
-    renderTodayList();
+    setText(
+        "#weeklyTotal",
+        getLast7DaysRecords().length
+    );
 
-    renderRecentAttendance();
+
+    setText(
+        "#monthlyTotal",
+        attendance.filter(
+            item =>
+                item.date.startsWith(
+                    currentMonth()
+                )
+        ).length
+    );
+
+
+    renderToday();
+
+    renderRecent();
+
+}
+
+
+function countStatuses(records) {
+
+    return {
+
+        hadir:
+            records.filter(
+                item =>
+                    item.status === "hadir"
+            ).length,
+
+        izin:
+            records.filter(
+                item =>
+                    item.status === "izin"
+            ).length,
+
+        sakit:
+            records.filter(
+                item =>
+                    item.status === "sakit"
+            ).length,
+
+        alpa:
+            records.filter(
+                item =>
+                    item.status === "alpa"
+            ).length
+
+    };
 
 }
 
 
 /* =========================================================
-   TODAY LIST
+   TODAY
 ========================================================= */
 
-function renderTodayList() {
+function renderToday() {
 
     const container =
         $("#todayList");
@@ -1104,15 +1105,17 @@ function renderTodayList() {
     if (!container) return;
 
 
-    const today =
-        getLocalDate();
-
-
     const records =
-        attendance.filter(
-            item =>
-                item.date === today
-        );
+        attendance
+            .filter(
+                item =>
+                    item.date === today()
+            )
+            .sort(
+                (a, b) =>
+                    new Date(b.createdAt) -
+                    new Date(a.createdAt)
+            );
 
 
     if (!records.length) {
@@ -1126,63 +1129,62 @@ function renderTodayList() {
         `;
 
         return;
-
     }
 
 
     container.innerHTML =
         records
-            .map(
-                record =>
-                    createAttendanceItem(
-                        record
-                    )
-            )
+            .map(record => `
+
+                <div class="today-item">
+
+                    <div class="today-member">
+
+                        <div class="avatar">
+                            ${escapeHTML(
+                                initials(
+                                    record.memberName
+                                )
+                            )}
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                ${escapeHTML(
+                                    record.memberName
+                                )}
+                            </strong>
+
+                            <small>
+                                ${formatDate(
+                                    record.date
+                                )}
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                    <span class="status-badge ${record.status}">
+                        ${statusName(
+                            record.status
+                        )}
+                    </span>
+
+                </div>
+
+            `)
             .join("");
 
 }
 
 
-function createAttendanceItem(record) {
-
-    return `
-        <div class="today-item">
-
-            <div class="today-member">
-
-                <div class="avatar">
-                    ${getInitials(record.memberName)}
-                </div>
-
-                <div>
-
-                    <strong>
-                        ${escapeHtml(record.memberName)}
-                    </strong>
-
-                    <small>
-                        ${formatDate(record.date)}
-                    </small>
-
-                </div>
-
-            </div>
-
-            <span class="status-badge ${record.status}">
-                ${statusLabel(record.status)}
-            </span>
-
-        </div>
-    `;
-
-}
-
-
 /* =========================================================
-   RECENT ATTENDANCE
+   RECENT
 ========================================================= */
 
-function renderRecentAttendance() {
+function renderRecent() {
 
     const container =
         $("#recentAttendance");
@@ -1211,11 +1213,11 @@ function renderRecentAttendance() {
         `;
 
         return;
-
     }
 
 
     container.innerHTML = `
+
         <div class="table-wrapper">
 
             <table>
@@ -1223,15 +1225,10 @@ function renderRecentAttendance() {
                 <thead>
 
                     <tr>
-
                         <th>Nama</th>
-
                         <th>Tanggal</th>
-
                         <th>Status</th>
-
                         <th>Keterangan</th>
-
                     </tr>
 
                 </thead>
@@ -1243,21 +1240,31 @@ function renderRecentAttendance() {
                         <tr>
 
                             <td>
-                                ${escapeHtml(record.memberName)}
+                                <strong>
+                                    ${escapeHTML(
+                                        record.memberName
+                                    )}
+                                </strong>
                             </td>
 
                             <td>
-                                ${formatDate(record.date)}
+                                ${formatDate(
+                                    record.date
+                                )}
                             </td>
 
                             <td>
                                 <span class="status-badge ${record.status}">
-                                    ${statusLabel(record.status)}
+                                    ${statusName(
+                                        record.status
+                                    )}
                                 </span>
                             </td>
 
                             <td>
-                                ${escapeHtml(record.note || "-")}
+                                ${escapeHTML(
+                                    record.note || "-"
+                                )}
                             </td>
 
                         </tr>
@@ -1269,6 +1276,7 @@ function renderRecentAttendance() {
             </table>
 
         </div>
+
     `;
 
 }
@@ -1278,9 +1286,9 @@ function renderRecentAttendance() {
    ATTENDANCE PAGE
 ========================================================= */
 
-function renderAttendancePage() {
+function renderAttendance() {
 
-    populateMemberSelect();
+    populateMembers();
 
 
     const container =
@@ -1289,20 +1297,23 @@ function renderAttendancePage() {
     if (!container) return;
 
 
-    const filter =
-        $("#filterDate")?.value;
-
-
-    const date =
-        filter ||
-        getLocalDate();
+    const selectedDate =
+        $("#filterDate")?.value ||
+        today();
 
 
     const records =
-        attendance.filter(
-            item =>
-                item.date === date
-        );
+        attendance
+            .filter(
+                item =>
+                    item.date === selectedDate
+            )
+            .sort(
+                (a, b) =>
+                    a.memberName.localeCompare(
+                        b.memberName
+                    )
+            );
 
 
     if (!records.length) {
@@ -1313,17 +1324,17 @@ function renderAttendancePage() {
                 <h3>Belum ada absensi</h3>
                 <p>
                     Tidak ada data untuk
-                    ${formatDate(date)}.
+                    ${formatDate(selectedDate)}.
                 </p>
             </div>
         `;
 
         return;
-
     }
 
 
     container.innerHTML = `
+
         <div class="table-wrapper">
 
             <table>
@@ -1347,25 +1358,32 @@ function renderAttendancePage() {
 
                             <td>
                                 <strong>
-                                    ${escapeHtml(record.memberName)}
+                                    ${escapeHTML(
+                                        record.memberName
+                                    )}
                                 </strong>
                             </td>
 
                             <td>
                                 <span class="status-badge ${record.status}">
-                                    ${statusLabel(record.status)}
+                                    ${statusName(
+                                        record.status
+                                    )}
                                 </span>
                             </td>
 
                             <td>
-                                ${escapeHtml(record.note || "-")}
+                                ${escapeHTML(
+                                    record.note || "-"
+                                )}
                             </td>
 
                             <td>
 
                                 <button
                                     class="delete-button"
-                                    onclick="deleteAttendance('${record.id}')"
+                                    type="button"
+                                    data-delete-attendance="${record.id}"
                                 >
                                     Hapus
                                 </button>
@@ -1381,58 +1399,29 @@ function renderAttendancePage() {
             </table>
 
         </div>
+
     `;
 
-}
 
-
-/* =========================================================
-   DELETE ATTENDANCE
-========================================================= */
-
-function deleteAttendance(id) {
-
-    const record =
-        attendance.find(
-            item =>
-                item.id === id
-        );
-
-
-    if (!record) return;
-
-
-    if (
-        !confirm(
-            `Hapus data absensi ${record.memberName}?`
+    container
+        .querySelectorAll(
+            "[data-delete-attendance]"
         )
-    ) {
+        .forEach(button => {
 
-        return;
+            button.addEventListener(
+                "click",
+                () => {
 
-    }
+                    deleteAttendance(
+                        button.dataset
+                            .deleteAttendance
+                    );
 
+                }
+            );
 
-    attendance =
-        attendance.filter(
-            item =>
-                item.id !== id
-        );
-
-
-    saveData(
-        STORAGE_ATTENDANCE,
-        attendance
-    );
-
-
-    renderAll();
-
-
-    showToast(
-        "Berhasil",
-        "Data absensi telah dihapus."
-    );
+        });
 
 }
 
@@ -1441,47 +1430,90 @@ function deleteAttendance(id) {
    WEEKLY
 ========================================================= */
 
+function getLast7DaysRecords() {
+
+    const now =
+        new Date();
+
+
+    now.setHours(
+        23,
+        59,
+        59,
+        999
+    );
+
+
+    const start =
+        new Date();
+
+
+    start.setHours(
+        0,
+        0,
+        0,
+        0
+    );
+
+
+    start.setDate(
+        start.getDate() - 6
+    );
+
+
+    return attendance.filter(
+        record => {
+
+            const date =
+                new Date(
+                    `${record.date}T00:00:00`
+                );
+
+            return (
+                date >= start &&
+                date <= now
+            );
+
+        }
+    );
+
+}
+
+
 function renderWeekly() {
 
-    const container =
-        $("#weeklyTable");
-
-    if (!container) return;
-
-
     const records =
-        getRecordsLastDays(7);
+        getLast7DaysRecords();
 
 
-    const counts =
+    const count =
         countStatuses(records);
 
 
     setText(
         "#weeklyHadir",
-        counts.hadir
+        count.hadir
     );
 
     setText(
         "#weeklyIzin",
-        counts.izin
+        count.izin
     );
 
     setText(
         "#weeklySakit",
-        counts.sakit
+        count.sakit
     );
 
     setText(
         "#weeklyAlpa",
-        counts.alpa
+        count.alpa
     );
 
 
-    renderRecapTable(
-        container,
-        records,
-        "7 hari terakhir"
+    renderRecap(
+        "#weeklyTable",
+        records
     );
 
 }
@@ -1493,19 +1525,9 @@ function renderWeekly() {
 
 function renderMonthly() {
 
-    const container =
-        $("#monthlyTable");
-
-    if (!container) return;
-
-
-    const monthInput =
-        $("#filterMonth");
-
-
     const selectedMonth =
-        monthInput?.value ||
-        getCurrentMonth();
+        $("#filterMonth")?.value ||
+        currentMonth();
 
 
     const records =
@@ -1517,49 +1539,53 @@ function renderMonthly() {
         );
 
 
-    const counts =
+    const count =
         countStatuses(records);
 
 
     setText(
         "#monthlyHadir",
-        counts.hadir
+        count.hadir
     );
 
     setText(
         "#monthlyIzin",
-        counts.izin
+        count.izin
     );
 
     setText(
         "#monthlySakit",
-        counts.sakit
+        count.sakit
     );
 
     setText(
         "#monthlyAlpa",
-        counts.alpa
+        count.alpa
     );
 
 
-    renderRecapTable(
-        container,
-        records,
-        "Bulan terpilih"
+    renderRecap(
+        "#monthlyTable",
+        records
     );
 
 }
 
 
 /* =========================================================
-   RECAP TABLE
+   RECAP
 ========================================================= */
 
-function renderRecapTable(
-    container,
-    records,
-    label
+function renderRecap(
+    selector,
+    records
 ) {
+
+    const container =
+        $(selector);
+
+    if (!container) return;
+
 
     if (!records.length) {
 
@@ -1567,15 +1593,11 @@ function renderRecapTable(
             <div class="empty-state">
                 <div>📊</div>
                 <h3>Belum ada data</h3>
-                <p>
-                    Belum ada data untuk
-                    ${label}.
-                </p>
+                <p>Belum ada data absensi.</p>
             </div>
         `;
 
         return;
-
     }
 
 
@@ -1604,17 +1626,9 @@ function renderRecapTable(
         }
 
 
-        if (
-            grouped[record.memberId][
-                record.status
-            ] !== undefined
-        ) {
-
-            grouped[record.memberId][
-                record.status
-            ]++;
-
-        }
+        grouped[
+            record.memberId
+        ][record.status]++;
 
     });
 
@@ -1666,7 +1680,9 @@ function renderRecapTable(
 
                                 <td>
                                     <strong>
-                                        ${escapeHtml(row.name)}
+                                        ${escapeHTML(
+                                            row.name
+                                        )}
                                     </strong>
                                 </td>
 
@@ -1718,7 +1734,7 @@ function renderRecapTable(
 
 
 /* =========================================================
-   MEMBERS
+   MEMBERS PAGE
 ========================================================= */
 
 function renderMembers() {
@@ -1727,6 +1743,12 @@ function renderMembers() {
         $("#membersTable");
 
     if (!container) return;
+
+
+    setText(
+        "#memberCount",
+        members.length
+    );
 
 
     if (!members.length) {
@@ -1740,7 +1762,6 @@ function renderMembers() {
         `;
 
         return;
-
     }
 
 
@@ -1802,13 +1823,21 @@ function renderMembers() {
                                         <div class="today-member">
 
                                             <div class="avatar">
-                                                ${getInitials(member.name)}
+                                                ${escapeHTML(
+                                                    initials(
+                                                        member.name
+                                                    )
+                                                )}
                                             </div>
 
                                             <div>
+
                                                 <strong>
-                                                    ${escapeHtml(member.name)}
+                                                    ${escapeHTML(
+                                                        member.name
+                                                    )}
                                                 </strong>
+
                                             </div>
 
                                         </div>
@@ -1827,7 +1856,8 @@ function renderMembers() {
 
                                         <button
                                             class="delete-button"
-                                            onclick="deleteMember('${member.id}')"
+                                            type="button"
+                                            data-delete-member="${member.id}"
                                         >
                                             Hapus
                                         </button>
@@ -1850,24 +1880,40 @@ function renderMembers() {
     `;
 
 
-    setText(
-        "#memberCount",
-        members.length
-    );
+    container
+        .querySelectorAll(
+            "[data-delete-member]"
+        )
+        .forEach(button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    deleteMember(
+                        button.dataset
+                            .deleteMember
+                    );
+
+                }
+            );
+
+        });
 
 }
 
 
 /* =========================================================
-   EXPORT
+   EXPORT CSV
 ========================================================= */
 
-function initializeExport() {
+function initExport() {
 
-    $("#exportButton")?.addEventListener(
-        "click",
-        exportCSV
-    );
+    $("#exportButton")
+        ?.addEventListener(
+            "click",
+            exportCSV
+        );
 
 }
 
@@ -1882,20 +1928,14 @@ function exportCSV() {
         );
 
         return;
-
     }
 
 
     const header = [
-
         "Tanggal",
-
         "Nama",
-
         "Status",
-
         "Keterangan"
-
     ];
 
 
@@ -1908,21 +1948,19 @@ function exportCSV() {
                         b.date
                     )
             )
-            .map(
-                item => [
+            .map(record => [
 
-                    item.date,
+                record.date,
 
-                    item.memberName,
+                record.memberName,
 
-                    statusLabel(
-                        item.status
-                    ),
+                statusName(
+                    record.status
+                ),
 
-                    item.note || ""
+                record.note || ""
 
-                ]
-            );
+            ]);
 
 
     const csv = [
@@ -1932,14 +1970,11 @@ function exportCSV() {
         ...rows
 
     ]
-
-        .map(
-            row =>
-                row
-                    .map(csvEscape)
-                    .join(",")
+        .map(row =>
+            row
+                .map(csvEscape)
+                .join(",")
         )
-
         .join("\n");
 
 
@@ -1948,7 +1983,7 @@ function exportCSV() {
             ["\ufeff" + csv],
             {
                 type:
-                    "text/csv;charset=utf-8;"
+                    "text/csv;charset=utf-8"
             }
         );
 
@@ -1964,7 +1999,7 @@ function exportCSV() {
     link.href = url;
 
     link.download =
-        `absen-577-${getLocalDate()}.csv`;
+        `absen-577-${today()}.csv`;
 
 
     document.body.appendChild(link);
@@ -1973,14 +2008,38 @@ function exportCSV() {
 
     link.remove();
 
-
     URL.revokeObjectURL(url);
 
 
     showToast(
-        "Berhasil",
-        "Data absensi berhasil diekspor."
+        "Export berhasil",
+        "Data absensi berhasil diunduh."
     );
+
+}
+
+
+function csvEscape(value) {
+
+    const text =
+        String(value ?? "");
+
+
+    if (
+        text.includes(",") ||
+        text.includes('"') ||
+        text.includes("\n")
+    ) {
+
+        return `"${text.replaceAll(
+            '"',
+            '""'
+        )}"`;
+
+    }
+
+
+    return text;
 
 }
 
@@ -1989,17 +2048,15 @@ function exportCSV() {
    TOAST
 ========================================================= */
 
-function initializeToast() {
+function initToast() {
 
-    $("#closeToast")?.addEventListener(
-        "click",
-        hideToast
-    );
+    $("#closeToast")
+        ?.addEventListener(
+            "click",
+            hideToast
+        );
 
 }
-
-
-let toastTimer = null;
 
 
 function showToast(
@@ -2045,9 +2102,10 @@ function showToast(
 
 function hideToast() {
 
-    $("#toast")?.classList.remove(
-        "show"
-    );
+    $("#toast")
+        ?.classList.remove(
+            "show"
+        );
 
 }
 
@@ -2060,9 +2118,11 @@ function renderAll() {
 
     updateDate();
 
+    populateMembers();
+
     renderDashboard();
 
-    renderAttendancePage();
+    renderAttendance();
 
     renderWeekly();
 
@@ -2074,325 +2134,20 @@ function renderAll() {
 
 
 /* =========================================================
-   COUNT STATUS
-========================================================= */
-
-function countStatuses(records) {
-
-    return {
-
-        hadir:
-            records.filter(
-                item =>
-                    item.status ===
-                    "hadir"
-            ).length,
-
-        izin:
-            records.filter(
-                item =>
-                    item.status ===
-                    "izin"
-            ).length,
-
-        sakit:
-            records.filter(
-                item =>
-                    item.status ===
-                    "sakit"
-            ).length,
-
-        alpa:
-            records.filter(
-                item =>
-                    item.status ===
-                    "alpa"
-            ).length
-
-    };
-
-}
-
-
-/* =========================================================
-   PERIOD CALCULATIONS
-========================================================= */
-
-function getRecordsLastDays(days) {
-
-    const today =
-        new Date();
-
-
-    today.setHours(
-        0,
-        0,
-        0,
-        0
-    );
-
-
-    const start =
-        new Date(today);
-
-
-    start.setDate(
-        start.getDate() -
-        (days - 1)
-    );
-
-
-    return attendance.filter(
-        record => {
-
-            const date =
-                new Date(
-                    `${record.date}T00:00:00`
-                );
-
-
-            return (
-                date >= start &&
-                date <= today
-            );
-
-        }
-    );
-
-}
-
-
-function getPeriodTotal(days) {
-
-    return getRecordsLastDays(
-        days
-    ).length;
-
-}
-
-
-function getMonthlyTotal() {
-
-    const month =
-        getCurrentMonth();
-
-
-    return attendance.filter(
-        item =>
-            item.date.startsWith(
-                month
-            )
-    ).length;
-
-}
-
-
-function getCurrentMonth() {
-
-    const now =
-        new Date();
-
-
-    return `${now.getFullYear()}-${String(
-        now.getMonth() + 1
-    ).padStart(2, "0")}`;
-
-}
-
-
-/* =========================================================
-   UTILITY
-========================================================= */
-
-function createId() {
-
-    return (
-        "id_" +
-        Date.now().toString(36) +
-        "_" +
-        Math.random()
-            .toString(36)
-            .slice(2, 8)
-    );
-
-}
-
-
-function getInitials(name) {
-
-    return name
-        .trim()
-        .split(/\s+/)
-        .slice(0, 2)
-        .map(
-            word =>
-                word
-                    .charAt(0)
-                    .toUpperCase()
-        )
-        .join("");
-
-}
-
-
-function statusLabel(status) {
-
-    const labels = {
-
-        hadir: "Hadir",
-
-        izin: "Izin",
-
-        sakit: "Sakit",
-
-        alpa: "Alpa"
-
-    };
-
-
-    return (
-        labels[status] ||
-        status
-    );
-
-}
-
-
-function formatDate(dateString) {
-
-    if (!dateString) {
-        return "-";
-    }
-
-
-    const date =
-        new Date(
-            `${dateString}T00:00:00`
-        );
-
-
-    if (
-        Number.isNaN(
-            date.getTime()
-        )
-    ) {
-
-        return dateString;
-
-    }
-
-
-    return date.toLocaleDateString(
-        "id-ID",
-        {
-            day: "numeric",
-            month: "short",
-            year: "numeric"
-        }
-    );
-
-}
-
-
-function setText(
-    selector,
-    value
-) {
-
-    const element =
-        $(selector);
-
-    if (element) {
-
-        element.textContent =
-            value;
-
-    }
-
-}
-
-
-function formResetSafe() {
-
-    return Boolean(
-        $("#attendanceForm")
-    );
-
-}
-
-
-function csvEscape(value) {
-
-    const string =
-        String(
-            value ?? ""
-        );
-
-
-    if (
-        string.includes(",") ||
-        string.includes('"') ||
-        string.includes("\n")
-    ) {
-
-        return `"${string.replace(
-            /"/g,
-            '""'
-        )}"`;
-
-    }
-
-
-    return string;
-
-}
-
-
-function escapeHtml(value) {
-
-    return String(
-        value ?? ""
-    )
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-        .replace(
-            /</g,
-            "&lt;"
-        )
-        .replace(
-            />/g,
-            "&gt;"
-        )
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-        .replace(
-            /'/g,
-            "&#039;"
-        );
-
-}
-
-
-/* =========================================================
-   GLOBAL FUNCTIONS
-   Dipakai oleh onclick di HTML
+   GLOBAL
 ========================================================= */
 
 window.openPage =
     openPage;
 
-window.deleteMember =
-    deleteMember;
-
 window.deleteAttendance =
     deleteAttendance;
 
-window.showToast =
-    showToast;
+window.deleteMember =
+    deleteMember;
 
 window.closeMemberModal =
     closeMemberModal;
+
+window.showToast =
+    showToast;
