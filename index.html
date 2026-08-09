@@ -4,53 +4,80 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Absensi Harian</title>
+    <title>Absensi 577</title>
 
-    <meta name="description" content="Website absensi harian dengan rekap mingguan dan bulanan.">
-    <meta name="theme-color" content="#111827">
+    <meta
+        name="description"
+        content="Website absensi harian dengan rekap mingguan dan bulanan."
+    >
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="./style.css">
 </head>
 
 <body>
 
+    <!-- LOADING -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loader"></div>
+        <p>Memuat aplikasi...</p>
+    </div>
+
+
     <!-- SIDEBAR -->
-    <aside class="sidebar" id="sidebar">
+    <aside id="sidebar" class="sidebar">
 
         <div class="logo">
             <div class="logo-icon">✓</div>
+
             <div>
-                <h2>Absensi</h2>
+                <h2>ABSEN 577</h2>
                 <span>Daily Attendance</span>
             </div>
         </div>
 
+
         <nav class="navigation">
 
-            <a href="#dashboard" class="nav-item active" data-page="dashboard">
+            <button
+                class="nav-item active"
+                data-page="dashboard"
+            >
                 <span>📊</span>
                 <span>Dashboard</span>
-            </a>
+            </button>
 
-            <a href="#absensi" class="nav-item" data-page="absensi">
+
+            <button
+                class="nav-item"
+                data-page="absensi"
+            >
                 <span>📝</span>
                 <span>Absensi</span>
-            </a>
+            </button>
 
-            <a href="#rekap" class="nav-item" data-page="rekap">
+
+            <button
+                class="nav-item"
+                data-page="rekap"
+            >
                 <span>📅</span>
                 <span>Rekap</span>
-            </a>
+            </button>
 
-            <a href="#anggota" class="nav-item" data-page="anggota">
+
+            <button
+                class="nav-item"
+                data-page="anggota"
+            >
                 <span>👥</span>
                 <span>Anggota</span>
-            </a>
+            </button>
 
         </nav>
 
+
         <div class="sidebar-footer">
-            <span>© 2026 Absensi</span>
+            © 2026 ABSEN 577
         </div>
 
     </aside>
@@ -62,44 +89,72 @@
         <!-- HEADER -->
         <header class="header">
 
-            <button class="menu-button" id="menuButton">
+            <button
+                id="menuButton"
+                class="menu-button"
+                type="button"
+            >
                 ☰
             </button>
 
+
             <div class="header-title">
-                <h1 id="pageTitle">Dashboard</h1>
-                <p id="currentDate">Memuat tanggal...</p>
+                <h1 id="pageTitle">
+                    Dashboard
+                </h1>
+
+                <p id="currentDate">
+                    -
+                </p>
             </div>
 
-            <div class="header-right">
-                <div class="clock" id="clock">
-                    00:00:00
-                </div>
+
+            <div class="clock" id="clock">
+                00:00:00
             </div>
 
         </header>
 
 
         <!-- ================= DASHBOARD ================= -->
-        <section class="page active" id="dashboard">
+
+        <section
+            id="dashboard"
+            class="page active"
+        >
 
             <div class="welcome">
+
                 <div>
-                    <h2>Selamat Datang 👋</h2>
-                    <p>Kelola absensi harian dengan mudah.</p>
+                    <h2>
+                        Selamat Datang 👋
+                    </h2>
+
+                    <p>
+                        Kelola absensi harian dengan mudah.
+                    </p>
                 </div>
 
-                <button class="primary-button" onclick="showPage('absensi')">
+
+                <button
+                    id="quickAttendance"
+                    class="primary-button"
+                    type="button"
+                >
                     + Absen Hari Ini
                 </button>
+
             </div>
 
 
-            <!-- STATISTICS -->
+            <!-- STATISTIK HARI INI -->
+
             <div class="stats-grid">
 
                 <div class="stat-card">
-                    <div class="stat-icon hadir">✓</div>
+                    <div class="stat-icon hadir">
+                        ✓
+                    </div>
 
                     <div class="stat-info">
                         <span>Hadir Hari Ini</span>
@@ -109,7 +164,9 @@
 
 
                 <div class="stat-card">
-                    <div class="stat-icon izin">I</div>
+                    <div class="stat-icon izin">
+                        I
+                    </div>
 
                     <div class="stat-info">
                         <span>Izin Hari Ini</span>
@@ -119,7 +176,9 @@
 
 
                 <div class="stat-card">
-                    <div class="stat-icon sakit">S</div>
+                    <div class="stat-icon sakit">
+                        S
+                    </div>
 
                     <div class="stat-info">
                         <span>Sakit Hari Ini</span>
@@ -129,7 +188,9 @@
 
 
                 <div class="stat-card">
-                    <div class="stat-icon alpa">A</div>
+                    <div class="stat-icon alpa">
+                        A
+                    </div>
 
                     <div class="stat-info">
                         <span>Alpa Hari Ini</span>
@@ -140,7 +201,8 @@
             </div>
 
 
-            <!-- WEEK / MONTH -->
+            <!-- MINGGU / BULAN -->
+
             <div class="summary-grid">
 
                 <div class="summary-card">
@@ -151,20 +213,34 @@
                             <p>Senin - Minggu</p>
                         </div>
 
-                        <span class="card-icon">📅</span>
+                        <span>📅</span>
                     </div>
+
 
                     <div class="summary-number">
-                        <strong id="weekPresent">0</strong>
-                        <span>Hadir</span>
+                        <strong id="weekPresent">
+                            0
+                        </strong>
+
+                        <span>
+                            Hadir
+                        </span>
                     </div>
 
+
                     <div class="progress-container">
+
                         <div class="progress-bar">
-                            <div class="progress-fill" id="weekProgress"></div>
+                            <div
+                                id="weekProgress"
+                                class="progress-fill"
+                            ></div>
                         </div>
 
-                        <span id="weekPercentage">0%</span>
+                        <span id="weekPercentage">
+                            0%
+                        </span>
+
                     </div>
 
                 </div>
@@ -175,23 +251,43 @@
                     <div class="card-header">
                         <div>
                             <h3>Rekap Bulan Ini</h3>
-                            <p id="monthName">Bulan</p>
+                            <p id="monthName">
+                                -
+                            </p>
                         </div>
 
-                        <span class="card-icon">📆</span>
+                        <span>📆</span>
                     </div>
+
 
                     <div class="summary-number">
-                        <strong id="monthPresent">0</strong>
-                        <span>Hadir</span>
+
+                        <strong id="monthPresent">
+                            0
+                        </strong>
+
+                        <span>
+                            Hadir
+                        </span>
+
                     </div>
 
+
                     <div class="progress-container">
+
                         <div class="progress-bar">
-                            <div class="progress-fill" id="monthProgress"></div>
+
+                            <div
+                                id="monthProgress"
+                                class="progress-fill"
+                            ></div>
+
                         </div>
 
-                        <span id="monthPercentage">0%</span>
+                        <span id="monthPercentage">
+                            0%
+                        </span>
+
                     </div>
 
                 </div>
@@ -199,19 +295,33 @@
             </div>
 
 
-            <!-- RECENT ATTENDANCE -->
+            <!-- ABSENSI TERBARU -->
+
             <div class="content-card">
 
                 <div class="card-header">
+
                     <div>
-                        <h3>Absensi Terbaru</h3>
-                        <p>Riwayat absensi terbaru</p>
+                        <h3>
+                            Absensi Terbaru
+                        </h3>
+
+                        <p>
+                            Riwayat absensi terbaru
+                        </p>
                     </div>
 
-                    <button class="secondary-button" onclick="showPage('rekap')">
+
+                    <button
+                        id="viewRecap"
+                        class="secondary-button"
+                        type="button"
+                    >
                         Lihat Semua
                     </button>
+
                 </div>
+
 
                 <div class="table-wrapper">
 
@@ -228,8 +338,11 @@
 
                         <tbody id="recentAttendance">
                             <tr>
-                                <td colspan="4" class="empty">
-                                    Belum ada data absensi.
+                                <td
+                                    colspan="4"
+                                    class="empty"
+                                >
+                                    Belum ada data.
                                 </td>
                             </tr>
                         </tbody>
@@ -244,25 +357,45 @@
 
 
         <!-- ================= ABSENSI ================= -->
-        <section class="page" id="absensi">
+
+        <section
+            id="absensi"
+            class="page"
+        >
 
             <div class="page-heading">
+
                 <div>
-                    <h2>Absensi Hari Ini</h2>
-                    <p id="attendanceDate">Memuat tanggal...</p>
+                    <h2>
+                        Absensi Hari Ini
+                    </h2>
+
+                    <p id="attendanceDate">
+                        -
+                    </p>
                 </div>
+
             </div>
 
 
             <div class="attendance-container">
 
+                <!-- FORM -->
+
                 <div class="content-card">
 
                     <div class="card-header">
+
                         <div>
-                            <h3>Input Absensi</h3>
-                            <p>Pilih anggota dan status kehadiran.</p>
+                            <h3>
+                                Input Absensi
+                            </h3>
+
+                            <p>
+                                Pilih anggota dan status.
+                            </p>
                         </div>
+
                     </div>
 
 
@@ -274,12 +407,13 @@
                                 Nama Anggota
                             </label>
 
-                            <select id="memberSelect" required>
-
+                            <select
+                                id="memberSelect"
+                                required
+                            >
                                 <option value="">
                                     -- Pilih Anggota --
                                 </option>
-
                             </select>
 
                         </div>
@@ -291,6 +425,7 @@
                                 Status Kehadiran
                             </label>
 
+
                             <div class="status-options">
 
                                 <label class="status-option hadir-option">
@@ -299,7 +434,6 @@
                                         type="radio"
                                         name="status"
                                         value="Hadir"
-                                        required
                                     >
 
                                     <span>
@@ -371,7 +505,7 @@
                             <textarea
                                 id="note"
                                 rows="3"
-                                placeholder="Catatan jika diperlukan..."
+                                placeholder="Catatan..."
                             ></textarea>
 
                         </div>
@@ -389,30 +523,44 @@
                 </div>
 
 
-                <!-- TODAY LIST -->
+                <!-- HARI INI -->
+
                 <div class="content-card">
 
                     <div class="card-header">
 
                         <div>
-                            <h3>Absensi Hari Ini</h3>
-                            <p>Daftar kehadiran hari ini.</p>
+                            <h3>
+                                Absensi Hari Ini
+                            </h3>
+
+                            <p>
+                                Daftar kehadiran hari ini.
+                            </p>
                         </div>
 
                     </div>
 
-                    <div class="today-list" id="todayList">
 
+                    <div
+                        id="todayList"
+                        class="today-list"
+                    >
                         <div class="empty-state">
-                            <div class="empty-icon">📝</div>
 
-                            <h3>Belum ada absensi</h3>
+                            <div class="empty-icon">
+                                📝
+                            </div>
+
+                            <h3>
+                                Belum ada absensi
+                            </h3>
 
                             <p>
-                                Data absensi hari ini akan muncul di sini.
+                                Data akan muncul di sini.
                             </p>
-                        </div>
 
+                        </div>
                     </div>
 
                 </div>
@@ -423,19 +571,27 @@
 
 
         <!-- ================= REKAP ================= -->
-        <section class="page" id="rekap">
+
+        <section
+            id="rekap"
+            class="page"
+        >
 
             <div class="page-heading">
 
                 <div>
-                    <h2>Rekap Absensi</h2>
-                    <p>Lihat rekap absensi mingguan dan bulanan.</p>
+                    <h2>
+                        Rekap Absensi
+                    </h2>
+
+                    <p>
+                        Rekap mingguan dan bulanan.
+                    </p>
                 </div>
 
             </div>
 
 
-            <!-- FILTER -->
             <div class="filter-card">
 
                 <div class="form-group">
@@ -482,52 +638,71 @@
             </div>
 
 
-            <!-- RECAP STATS -->
             <div class="recap-stats">
 
                 <div class="recap-card">
-                    <span>Total Hadir</span>
-                    <strong id="recapPresent">0</strong>
+                    <span>Hadir</span>
+                    <strong id="recapPresent">
+                        0
+                    </strong>
                 </div>
 
-                <div class="recap-card">
-                    <span>Total Izin</span>
-                    <strong id="recapPermission">0</strong>
-                </div>
 
                 <div class="recap-card">
-                    <span>Total Sakit</span>
-                    <strong id="recapSick">0</strong>
+                    <span>Izin</span>
+                    <strong id="recapPermission">
+                        0
+                    </strong>
                 </div>
 
-                <div class="recap-card">
-                    <span>Total Alpa</span>
-                    <strong id="recapAbsent">0</strong>
-                </div>
 
                 <div class="recap-card">
-                    <span>Persentase</span>
-                    <strong id="recapPercentage">0%</strong>
+                    <span>Sakit</span>
+                    <strong id="recapSick">
+                        0
+                    </strong>
+                </div>
+
+
+                <div class="recap-card">
+                    <span>Alpa</span>
+                    <strong id="recapAbsent">
+                        0
+                    </strong>
+                </div>
+
+
+                <div class="recap-card">
+                    <span>Kehadiran</span>
+                    <strong id="recapPercentage">
+                        0%
+                    </strong>
                 </div>
 
             </div>
 
 
-            <!-- RECAP TABLE -->
             <div class="content-card">
 
                 <div class="card-header">
 
                     <div>
-                        <h3>Detail Rekap</h3>
-                        <p>Data absensi berdasarkan periode.</p>
+                        <h3>
+                            Detail Rekap
+                        </h3>
+
+                        <p>
+                            Data berdasarkan periode.
+                        </p>
                     </div>
 
+
                     <button
-                        class="secondary-button"
                         id="exportButton"
+                        class="secondary-button"
+                        type="button"
                     >
-                        📥 Export
+                        📥 Export CSV
                     </button>
 
                 </div>
@@ -549,10 +724,14 @@
 
                         </thead>
 
+
                         <tbody id="recapTable">
 
                             <tr>
-                                <td colspan="5" class="empty">
+                                <td
+                                    colspan="5"
+                                    class="empty"
+                                >
                                     Belum ada data.
                                 </td>
                             </tr>
@@ -569,18 +748,29 @@
 
 
         <!-- ================= ANGGOTA ================= -->
-        <section class="page" id="anggota">
+
+        <section
+            id="anggota"
+            class="page"
+        >
 
             <div class="page-heading">
 
                 <div>
-                    <h2>Data Anggota</h2>
-                    <p>Kelola daftar anggota yang melakukan absensi.</p>
+                    <h2>
+                        Data Anggota
+                    </h2>
+
+                    <p>
+                        Kelola anggota absensi.
+                    </p>
                 </div>
 
+
                 <button
-                    class="primary-button"
                     id="addMemberButton"
+                    class="primary-button"
+                    type="button"
                 >
                     + Tambah Anggota
                 </button>
@@ -599,19 +789,23 @@
                             <tr>
                                 <th>No</th>
                                 <th>Nama</th>
-                                <th>Total Hadir</th>
-                                <th>Total Izin</th>
-                                <th>Total Sakit</th>
-                                <th>Total Alpa</th>
+                                <th>Hadir</th>
+                                <th>Izin</th>
+                                <th>Sakit</th>
+                                <th>Alpa</th>
                                 <th>Aksi</th>
                             </tr>
 
                         </thead>
 
+
                         <tbody id="memberTable">
 
                             <tr>
-                                <td colspan="7" class="empty">
+                                <td
+                                    colspan="7"
+                                    class="empty"
+                                >
                                     Belum ada anggota.
                                 </td>
                             </tr>
@@ -629,22 +823,32 @@
     </main>
 
 
-    <!-- ================= MODAL TAMBAH ANGGOTA ================= -->
+    <!-- ================= MODAL ================= -->
 
-    <div class="modal" id="memberModal">
+    <div
+        id="memberModal"
+        class="modal"
+    >
 
         <div class="modal-content">
 
             <div class="modal-header">
 
                 <div>
-                    <h3>Tambah Anggota</h3>
-                    <p>Masukkan nama anggota baru.</p>
+                    <h3>
+                        Tambah Anggota
+                    </h3>
+
+                    <p>
+                        Masukkan nama anggota.
+                    </p>
                 </div>
 
+
                 <button
-                    class="close-button"
                     id="closeMemberModal"
+                    class="close-button"
+                    type="button"
                 >
                     ×
                 </button>
@@ -661,8 +865,8 @@
                     </label>
 
                     <input
-                        type="text"
                         id="memberName"
+                        type="text"
                         placeholder="Contoh: Rivano"
                         required
                     >
@@ -673,12 +877,13 @@
                 <div class="modal-actions">
 
                     <button
+                        id="cancelMember"
                         type="button"
                         class="secondary-button"
-                        id="cancelMember"
                     >
                         Batal
                     </button>
+
 
                     <button
                         type="submit"
@@ -698,11 +903,18 @@
 
     <!-- ================= TOAST ================= -->
 
-    <div class="toast" id="toast">
+    <div
+        id="toast"
+        class="toast"
+    >
 
-        <div class="toast-icon" id="toastIcon">
+        <div
+            id="toastIcon"
+            class="toast-icon"
+        >
             ✓
         </div>
+
 
         <div>
             <strong id="toastTitle">
@@ -710,29 +922,23 @@
             </strong>
 
             <p id="toastMessage">
-                Data berhasil disimpan.
+                -
             </p>
         </div>
 
-        <button id="closeToast">
+
+        <button
+            id="closeToast"
+            type="button"
+        >
             ×
         </button>
 
     </div>
 
 
-    <!-- ================= LOADING ================= -->
-
-    <div class="loading-screen" id="loadingScreen">
-
-        <div class="loader"></div>
-
-        <p>Memuat aplikasi...</p>
-
-    </div>
-
-
-    <script src="script.js"></script>
+    <!-- JAVASCRIPT -->
+    <script src="./script.js"></script>
 
 </body>
-              </html>
+</html>
