@@ -1,150 +1,385 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>ABSEN 577 — Absensi Harian</title>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>ABSEN 577</title>
 
     <meta
         name="description"
-        content="Website absensi harian ABSEN 577 dengan rekap mingguan dan bulanan."
+        content="Sistem absensi harian ABSEN 577"
     >
 
-    <link rel="stylesheet" href="style.css">
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
 </head>
 
 <body>
 
-    <!-- BACKGROUND -->
-    <div class="background">
-        <div class="bg-circle circle-1"></div>
-        <div class="bg-circle circle-2"></div>
-        <div class="bg-circle circle-3"></div>
+<!-- =====================================================
+     LOADING
+===================================================== -->
+
+<div id="loadingScreen">
+
+    <div class="loading-box">
+
+        <div class="loading-spinner"></div>
+
+        <h3>Memuat aplikasi...</h3>
+
+        <p>
+            ABSEN 577
+        </p>
+
     </div>
 
-
-    <!-- LOADING -->
-    <div id="loadingScreen" class="loading-screen">
-        <div class="loader"></div>
-        <h3>Memuat ABSEN 577...</h3>
-        <p>Mohon tunggu sebentar</p>
-    </div>
+</div>
 
 
-    <!-- MOBILE OVERLAY -->
-    <div class="sidebar-overlay"></div>
+<!-- =====================================================
+     BACKGROUND
+===================================================== -->
+
+<div class="background">
+
+    <div class="background-glow glow-one"></div>
+
+    <div class="background-glow glow-two"></div>
+
+    <div class="background-grid"></div>
+
+</div>
 
 
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
+<!-- =====================================================
+     SIDEBAR OVERLAY
+===================================================== -->
 
-        <div class="brand">
-            <div class="brand-logo">📋</div>
+<div
+    id="sidebarOverlay"
+    class="sidebar-overlay"
+></div>
+
+
+<!-- =====================================================
+     SIDEBAR
+===================================================== -->
+
+<aside class="sidebar">
+
+    <div class="sidebar-header">
+
+        <div class="logo">
+
+            <div class="logo-icon">
+                577
+            </div>
 
             <div>
-                <h2>ABSEN 577</h2>
-                <span>Daily Attendance</span>
+                <strong>ABSEN 577</strong>
+
+                <small>
+                    Attendance System
+                </small>
             </div>
+
+        </div>
+
+    </div>
+
+
+    <nav class="navigation">
+
+        <button
+            class="nav-item active"
+            data-page="dashboard"
+            type="button"
+        >
+
+            <span class="nav-icon">
+                🏠
+            </span>
+
+            <span>
+                Dashboard
+            </span>
+
+        </button>
+
+
+        <button
+            class="nav-item"
+            data-page="attendance"
+            type="button"
+        >
+
+            <span class="nav-icon">
+                📋
+            </span>
+
+            <span>
+                Absensi
+            </span>
+
+        </button>
+
+
+        <button
+            class="nav-item"
+            data-page="members"
+            type="button"
+        >
+
+            <span class="nav-icon">
+                👥
+            </span>
+
+            <span>
+                Anggota
+            </span>
+
+        </button>
+
+
+        <button
+            class="nav-item"
+            data-page="history"
+            type="button"
+        >
+
+            <span class="nav-icon">
+                📊
+            </span>
+
+            <span>
+                Riwayat
+            </span>
+
+        </button>
+
+    </nav>
+
+
+    <div class="sidebar-footer">
+
+        <div class="sidebar-status">
+
+            <span class="status-dot"></span>
+
+            <span>
+                Sistem Aktif
+            </span>
+
+        </div>
+
+    </div>
+
+</aside>
+
+
+<!-- =====================================================
+     MAIN
+===================================================== -->
+
+<main class="main-content">
+
+
+    <!-- =================================================
+         TOPBAR
+    ================================================= -->
+
+    <header class="topbar">
+
+        <button
+            id="menuButton"
+            class="menu-button"
+            type="button"
+        >
+            ☰
+        </button>
+
+
+        <div class="topbar-title">
+
+            <h1 id="pageTitle">
+                Dashboard
+            </h1>
+
+            <p id="currentDate">
+                -
+            </p>
+
         </div>
 
 
-        <nav class="navigation">
+        <div class="topbar-right">
 
-            <button
-                class="nav-item active"
-                data-page="dashboard"
-                type="button"
-            >
-                <span>🏠</span>
-                <span>Dashboard</span>
-            </button>
+            <div class="clock">
 
+                <span>
+                    🕐
+                </span>
 
-            <button
-                class="nav-item"
-                data-page="attendance"
-                type="button"
-            >
-                <span>📝</span>
-                <span>Absensi Harian</span>
-            </button>
+                <span id="clock">
+                    00:00:00
+                </span>
+
+            </div>
+
+        </div>
+
+    </header>
 
 
-            <button
-                class="nav-item"
-                data-page="weekly"
-                type="button"
-            >
-                <span>📊</span>
-                <span>Rekap Mingguan</span>
-            </button>
+    <!-- =================================================
+         DASHBOARD
+    ================================================= -->
 
+    <section
+        id="dashboard"
+        class="page active"
+    >
 
-            <button
-                class="nav-item"
-                data-page="monthly"
-                type="button"
-            >
-                <span>📅</span>
-                <span>Rekap Bulanan</span>
-            </button>
+        <div class="hero-card">
 
+            <div class="hero-content">
 
-            <button
-                class="nav-item"
-                data-page="members"
-                type="button"
-            >
-                <span>👥</span>
-                <span>Data Anggota</span>
-            </button>
-
-        </nav>
-
-
-        <div class="sidebar-bottom">
-
-            <div class="sidebar-info">
-                <span>✨</span>
-
-                <div>
-                    <strong>ABSEN 577</strong>
-                    <small>Simple & Modern</small>
+                <div class="hero-label">
+                    ABSEN 577
                 </div>
+
+                <h2>
+                    Selamat datang kembali! 👋
+                </h2>
+
+                <p>
+                    Kelola absensi anggota dengan
+                    cepat, mudah, dan teratur.
+                </p>
+
+            </div>
+
+            <div class="hero-decoration">
+                📋
             </div>
 
         </div>
 
-    </aside>
+
+        <!-- STATISTICS -->
+
+        <div class="stats-grid">
 
 
-    <!-- MAIN -->
-    <main class="main">
+            <div class="stat-card hadir">
 
-        <!-- TOPBAR -->
-        <header class="topbar">
-
-            <div class="topbar-left">
-
-                <button
-                    id="menuButton"
-                    class="menu-button"
-                    type="button"
-                    aria-label="Menu"
-                >
-                    ☰
-                </button>
-
+                <div class="stat-icon">
+                    ✓
+                </div>
 
                 <div>
 
-                    <h1 id="topbarTitle">
-                        Dashboard
-                    </h1>
+                    <span>
+                        Hadir Hari Ini
+                    </span>
 
-                    <p id="topbarSubtitle">
-                        Pantau kehadiran anggota dengan mudah.
+                    <strong id="todayHadir">
+                        0
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="stat-card izin">
+
+                <div class="stat-icon">
+                    i
+                </div>
+
+                <div>
+
+                    <span>
+                        Izin Hari Ini
+                    </span>
+
+                    <strong id="todayIzin">
+                        0
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="stat-card sakit">
+
+                <div class="stat-icon">
+                    +
+                </div>
+
+                <div>
+
+                    <span>
+                        Sakit Hari Ini
+                    </span>
+
+                    <strong id="todaySakit">
+                        0
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="stat-card alpa">
+
+                <div class="stat-icon">
+                    !
+                </div>
+
+                <div>
+
+                    <span>
+                        Alpa Hari Ini
+                    </span>
+
+                    <strong id="todayAlpa">
+                        0
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- SUMMARY -->
+
+        <div class="content-card summary-card">
+
+            <div class="card-header">
+
+                <div>
+
+                    <h2>
+                        Ringkasan Kehadiran
+                    </h2>
+
+                    <p>
+                        Statistik kehadiran hari ini
                     </p>
 
                 </div>
@@ -152,22 +387,93 @@
             </div>
 
 
-            <div class="topbar-right">
+            <div class="attendance-percentage">
 
-                <div class="clock-box">
+                <strong id="attendancePercentage">
+                    0%
+                </strong>
 
-                    <span class="clock-icon">
-                        🕐
+                <span>
+                    Tingkat Kehadiran
+                </span>
+
+            </div>
+
+
+            <div class="progress-area">
+
+                <div class="progress-label">
+
+                    <span>
+                        Kehadiran Hari Ini
+                    </span>
+
+                    <strong>
+                        <span id="attendancePercentage">
+                            0%
+                        </span>
+                    </strong>
+
+                </div>
+
+                <div class="progress">
+
+                    <div
+                        id="attendanceProgress"
+                        class="progress-bar"
+                        style="width:0%"
+                    ></div>
+
+                </div>
+
+            </div>
+
+
+            <div class="period-grid">
+
+                <div class="period-card">
+
+                    <span class="period-icon">
+                        📈
                     </span>
 
                     <div>
 
-                        <strong id="clock">
-                            00:00:00
+                        <span>
+                            Minggu ini
+                        </span>
+
+                        <strong id="weekTotal">
+                            0
                         </strong>
 
                         <small>
-                            Waktu sekarang
+                            total absensi
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <div class="period-card">
+
+                    <span class="period-icon">
+                        📅
+                    </span>
+
+                    <div>
+
+                        <span>
+                            Bulan ini
+                        </span>
+
+                        <strong id="monthTotal">
+                            0
+                        </strong>
+
+                        <small>
+                            total absensi
                         </small>
 
                     </div>
@@ -176,1121 +482,615 @@
 
             </div>
 
-        </header>
-
-
-        <!-- CONTENT -->
-        <div class="content">
-
-
-            <!-- =================================================
-                 DASHBOARD
-            ================================================== -->
-
-            <section
-                id="page-dashboard"
-                class="page active"
-            >
-
-                <div class="welcome-card">
-
-                    <div>
-
-                        <span class="welcome-label">
-                            ABSEN 577
-                        </span>
-
-                        <h2>
-                            Selamat datang kembali! 👋
-                        </h2>
-
-                        <p>
-                            Kelola absensi anggota dengan cepat,
-                            mudah, dan teratur.
-                        </p>
-
-                    </div>
-
-                    <div class="welcome-icon">
-                        📋
-                    </div>
-
-                </div>
-
-
-                <!-- STATISTICS -->
-
-                <div class="stats-grid">
-
-                    <div class="stat-card hadir">
-
-                        <div class="stat-icon">
-                            ✓
-                        </div>
-
-                        <div>
-
-                            <span>
-                                Hadir Hari Ini
-                            </span>
-
-                            <strong id="totalHadir">
-                                0
-                            </strong>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="stat-card izin">
-
-                        <div class="stat-icon">
-                            i
-                        </div>
-
-                        <div>
-
-                            <span>
-                                Izin Hari Ini
-                            </span>
-
-                            <strong id="totalIzin">
-                                0
-                            </strong>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="stat-card sakit">
-
-                        <div class="stat-icon">
-                            +
-                        </div>
-
-                        <div>
-
-                            <span>
-                                Sakit Hari Ini
-                            </span>
-
-                            <strong id="totalSakit">
-                                0
-                            </strong>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="stat-card alpa">
-
-                        <div class="stat-icon">
-                            !
-                        </div>
-
-                        <div>
-
-                            <span>
-                                Alpa Hari Ini
-                            </span>
-
-                            <strong id="totalAlpa">
-                                0
-                            </strong>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <!-- SUMMARY -->
-
-                <div class="card">
-
-                    <div class="card-header">
-
-                        <div>
-
-                            <h3>
-                                Ringkasan Kehadiran
-                            </h3>
-
-                            <p>
-                                Statistik kehadiran hari ini
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="attendance-summary">
-
-                        <div class="percentage">
-
-                            <strong id="attendancePercentage">
-                                0%
-                            </strong>
-
-                            <span>
-                                Tingkat Kehadiran
-                            </span>
-
-                        </div>
-
-
-                        <div class="progress-area">
-
-                            <div class="progress-info">
-                                <span>
-                                    Kehadiran Hari Ini
-                                </span>
-
-                                <strong id="attendanceProgressText">
-                                    0%
-                                </strong>
-                            </div>
-
-                            <div class="progress">
-                                <div
-                                    id="attendanceProgress"
-                                    class="progress-bar"
-                                ></div>
-                            </div>
-
-                        </div>
-
-
-                        <div class="summary-items">
-
-                            <div>
-                                📈
-                                <span>
-                                    Minggu ini
-                                </span>
-
-                                <strong id="weeklyTotal">
-                                    0
-                                </strong>
-
-                                <small>
-                                    total absensi
-                                </small>
-                            </div>
-
-
-                            <div>
-                                📅
-                                <span>
-                                    Bulan ini
-                                </span>
-
-                                <strong id="monthlyTotal">
-                                    0
-                                </strong>
-
-                                <small>
-                                    total absensi
-                                </small>
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <!-- TODAY -->
-
-                <div class="card">
-
-                    <div class="card-header">
-
-                        <div>
-
-                            <h3>
-                                Absensi Hari Ini
-                            </h3>
-
-                            <p id="todayDate">
-                                -
-                            </p>
-
-                        </div>
-
-
-                        <button
-                            class="secondary-button"
-                            type="button"
-                            onclick="openPage('attendance')"
-                        >
-                            Lihat semua
-                        </button>
-
-                    </div>
-
-
-                    <div id="todayList">
-
-                        <div class="empty-state">
-
-                            <div>
-                                📋
-                            </div>
-
-                            <h3>
-                                Belum ada absensi
-                            </h3>
-
-                            <p>
-                                Belum ada data kehadiran hari ini.
-                            </p>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <!-- RECENT -->
-
-                <div class="card">
-
-                    <div class="card-header">
-
-                        <div>
-
-                            <h3>
-                                Aktivitas Terbaru
-                            </h3>
-
-                            <p>
-                                Riwayat absensi terbaru
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-                    <div id="recentAttendance">
-
-                        <div class="empty-state">
-
-                            <div>
-                                📊
-                            </div>
-
-                            <h3>
-                                Belum ada data
-                            </h3>
-
-                            <p>
-                                Data absensi akan muncul di sini.
-                            </p>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </section>
-
-
-
-            <!-- =================================================
-                 ABSENSI HARIAN
-            ================================================== -->
-
-            <section
-                id="page-attendance"
-                class="page"
-            >
-
-                <div class="page-heading">
-
-                    <div>
-
-                        <h2>
-                            Absensi Harian
-                        </h2>
-
-                        <p>
-                            Catat kehadiran anggota setiap hari.
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <!-- FORM -->
-
-                <div class="card">
-
-                    <div class="card-header">
-
-                        <div>
-
-                            <h3>
-                                Tambah Absensi
-                            </h3>
-
-                            <p>
-                                Isi data kehadiran anggota.
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-                    <form id="attendanceForm">
-
-                        <div class="form-grid">
-
-                            <div class="form-group">
-
-                                <label for="attendanceDate">
-                                    Tanggal
-                                </label>
-
-                                <input
-                                    type="date"
-                                    id="attendanceDate"
-                                    required
-                                >
-
-                            </div>
-
-
-                            <div class="form-group">
-
-                                <label for="attendanceMember">
-                                    Nama Anggota
-                                </label>
-
-                                <select
-                                    id="attendanceMember"
-                                    required
-                                >
-
-                                    <option value="">
-                                        Pilih anggota
-                                    </option>
-
-                                </select>
-
-                            </div>
-
-                        </div>
-
-
-                        <div class="form-group">
-
-                            <label>
-                                Status Kehadiran
-                            </label>
-
-
-                            <div class="status-options">
-
-                                <label class="status-option hadir">
-
-                                    <input
-                                        type="radio"
-                                        name="status"
-                                        value="hadir"
-                                    >
-
-                                    <span>
-                                        ✓ Hadir
-                                    </span>
-
-                                </label>
-
-
-                                <label class="status-option izin">
-
-                                    <input
-                                        type="radio"
-                                        name="status"
-                                        value="izin"
-                                    >
-
-                                    <span>
-                                        I Izin
-                                    </span>
-
-                                </label>
-
-
-                                <label class="status-option sakit">
-
-                                    <input
-                                        type="radio"
-                                        name="status"
-                                        value="sakit"
-                                    >
-
-                                    <span>
-                                        + Sakit
-                                    </span>
-
-                                </label>
-
-
-                                <label class="status-option alpa">
-
-                                    <input
-                                        type="radio"
-                                        name="status"
-                                        value="alpa"
-                                    >
-
-                                    <span>
-                                        ! Alpa
-                                    </span>
-
-                                </label>
-
-                            </div>
-
-                        </div>
-
-
-                        <div class="form-group">
-
-                            <label for="attendanceNote">
-                                Keterangan
-                            </label>
-
-                            <textarea
-                                id="attendanceNote"
-                                rows="3"
-                                placeholder="Keterangan tambahan (opsional)"
-                            ></textarea>
-
-                        </div>
-
-
-                        <button
-                            class="primary-button"
-                            type="submit"
-                        >
-                            💾 Simpan Absensi
-                        </button>
-
-                    </form>
-
-                </div>
-
-
-                <!-- FILTER -->
-
-                <div class="card">
-
-                    <div class="card-header">
-
-                        <div>
-
-                            <h3>
-                                Data Absensi
-                            </h3>
-
-                            <p>
-                                Pilih tanggal untuk melihat data.
-                            </p>
-
-                        </div>
-
-
-                        <div class="filter-box">
-
-                            <label for="filterDate">
-                                Tanggal
-                            </label>
-
-                            <input
-                                type="date"
-                                id="filterDate"
-                            >
-
-                        </div>
-
-                    </div>
-
-
-                    <div id="attendanceTable">
-
-                        <div class="empty-state">
-
-                            <div>
-                                📅
-                            </div>
-
-                            <h3>
-                                Belum ada absensi
-                            </h3>
-
-                            <p>
-                                Belum ada data.
-                            </p>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </section>
-
-
-
-            <!-- =================================================
-                 WEEKLY
-            ================================================== -->
-
-            <section
-                id="page-weekly"
-                class="page"
-            >
-
-                <div class="page-heading">
-
-                    <div>
-
-                        <h2>
-                            Rekap Mingguan
-                        </h2>
-
-                        <p>
-                            Rekap kehadiran 7 hari terakhir.
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <div class="stats-grid">
-
-                    <div class="stat-card hadir">
-
-                        <div class="stat-icon">
-                            ✓
-                        </div>
-
-                        <div>
-
-                            <span>
-                                Hadir
-                            </span>
-
-                            <strong id="weeklyHadir">
-                                0
-                            </strong>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="stat-card izin">
-
-                        <div class="stat-icon">
-                            i
-                        </div>
-
-                        <div>
-
-                            <span>
-                                Izin
-                            </span>
-
-                            <strong id="weeklyIzin">
-                                0
-                            </strong>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="stat-card sakit">
-
-                        <div class="stat-icon">
-                            +
-                        </div>
-
-                        <div>
-
-                            <span>
-                                Sakit
-                            </span>
-
-                            <strong id="weeklySakit">
-                                0
-                            </strong>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="stat-card alpa">
-
-                        <div class="stat-icon">
-                            !
-                        </div>
-
-                        <div>
-
-                            <span>
-                                Alpa
-                            </span>
-
-                            <strong id="weeklyAlpa">
-                                0
-                            </strong>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <div class="card">
-
-                    <div class="card-header">
-
-                        <div>
-
-                            <h3>
-                                Rekap Anggota
-                            </h3>
-
-                            <p>
-                                Total kehadiran setiap anggota.
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-                    <div id="weeklyTable">
-
-                        <div class="empty-state">
-
-                            <div>
-                                📊
-                            </div>
-
-                            <h3>
-                                Belum ada data
-                            </h3>
-
-                            <p>
-                                Rekap mingguan akan muncul di sini.
-                            </p>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </section>
-
-
-
-            <!-- =================================================
-                 MONTHLY
-            ================================================== -->
-
-            <section
-                id="page-monthly"
-                class="page"
-            >
-
-                <div class="page-heading">
-
-                    <div>
-
-                        <h2>
-                            Rekap Bulanan
-                        </h2>
-
-                        <p>
-                            Lihat statistik kehadiran setiap bulan.
-                        </p>
-
-                    </div>
-
-                    <div class="filter-box">
-
-                        <label for="filterMonth">
-                            Bulan
-                        </label>
-
-                        <input
-                            type="month"
-                            id="filterMonth"
-                        >
-
-                    </div>
-
-                </div>
-
-
-                <div class="stats-grid">
-
-                    <div class="stat-card hadir">
-
-                        <div class="stat-icon">
-                            ✓
-                        </div>
-
-                        <div>
-
-                            <span>
-                                Hadir
-                            </span>
-
-                            <strong id="monthlyHadir">
-                                0
-                            </strong>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="stat-card izin">
-
-                        <div class="stat-icon">
-                            i
-                        </div>
-
-                        <div>
-
-                            <span>
-                                Izin
-                            </span>
-
-                            <strong id="monthlyIzin">
-                                0
-                            </strong>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="stat-card sakit">
-
-                        <div class="stat-icon">
-                            +
-                        </div>
-
-                        <div>
-
-                            <span>
-                                Sakit
-                            </span>
-
-                            <strong id="monthlySakit">
-                                0
-                            </strong>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="stat-card alpa">
-
-                        <div class="stat-icon">
-                            !
-                        </div>
-
-                        <div>
-
-                            <span>
-                                Alpa
-                            </span>
-
-                            <strong id="monthlyAlpa">
-                                0
-                            </strong>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <div class="card">
-
-                    <div class="card-header">
-
-                        <div>
-
-                            <h3>
-                                Rekap Bulanan
-                            </h3>
-
-                            <p>
-                                Statistik berdasarkan anggota.
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-                    <div id="monthlyTable">
-
-                        <div class="empty-state">
-
-                            <div>
-                                📅
-                            </div>
-
-                            <h3>
-                                Belum ada data
-                            </h3>
-
-                            <p>
-                                Rekap bulanan akan muncul di sini.
-                            </p>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </section>
-
-
-
-            <!-- =================================================
-                 MEMBERS
-            ================================================== -->
-
-            <section
-                id="page-members"
-                class="page"
-            >
-
-                <div class="page-heading">
-
-                    <div>
-
-                        <h2>
-                            Data Anggota
-                        </h2>
-
-                        <p>
-                            Kelola daftar anggota ABSEN 577.
-                        </p>
-
-                    </div>
-
-
-                    <button
-                        id="addMemberButton"
-                        class="primary-button"
-                        type="button"
-                    >
-                        + Tambah Anggota
-                    </button>
-
-                </div>
-
-
-                <div class="card">
-
-                    <div class="card-header">
-
-                        <div>
-
-                            <h3>
-                                Daftar Anggota
-                            </h3>
-
-                            <p>
-                                Total
-                                <strong id="memberCount">
-                                    0
-                                </strong>
-                                anggota.
-                            </p>
-
-                        </div>
-
-
-                        <button
-                            id="exportButton"
-                            class="secondary-button"
-                            type="button"
-                        >
-                            📥 Export CSV
-                        </button>
-
-                    </div>
-
-
-                    <div id="membersTable">
-
-                        <div class="empty-state">
-
-                            <div>
-                                👥
-                            </div>
-
-                            <h3>
-                                Belum ada anggota
-                            </h3>
-
-                            <p>
-                                Tambahkan anggota baru.
-                            </p>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </section>
-
         </div>
 
-    </main>
 
+        <!-- TODAY -->
 
+        <div class="content-card">
 
-    <!-- =====================================================
-         MEMBER MODAL
-    ====================================================== -->
-
-    <div
-        id="memberModal"
-        class="modal"
-    >
-
-        <div class="modal-content">
-
-            <div class="modal-header">
+            <div class="card-header">
 
                 <div>
 
-                    <h3>
-                        Tambah Anggota
-                    </h3>
+                    <h2>
+                        Absensi Hari Ini
+                    </h2>
 
-                    <p>
-                        Masukkan nama anggota baru.
+                    <p id="attendanceDate">
+                        -
                     </p>
 
                 </div>
 
-
                 <button
-                    id="closeMemberModal"
-                    class="modal-close"
+                    class="secondary-button"
                     type="button"
+                    onclick="showPage('history')"
                 >
-                    ×
+                    Lihat semua
                 </button>
 
             </div>
 
 
-            <form id="memberForm">
+            <div
+                id="todayAttendanceList"
+                class="today-list"
+            >
+
+                <div class="empty-state">
+
+                    <div>
+                        📋
+                    </div>
+
+                    <h3>
+                        Belum ada absensi
+                    </h3>
+
+                    <p>
+                        Belum ada data kehadiran
+                        hari ini.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =================================================
+         ATTENDANCE
+    ================================================= -->
+
+    <section
+        id="attendance"
+        class="page"
+    >
+
+        <div class="page-heading">
+
+            <div>
+
+                <span class="eyebrow">
+                    ABSEN HARIAN
+                </span>
+
+                <h2>
+                    Catat Kehadiran
+                </h2>
+
+                <p>
+                    Pilih anggota dan status
+                    kehadiran hari ini.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="content-card form-card">
+
+            <form
+                id="attendanceForm"
+            >
 
                 <div class="form-group">
 
-                    <label for="memberName">
+                    <label
+                        for="memberSelect"
+                    >
                         Nama Anggota
                     </label>
 
+                    <select
+                        id="memberSelect"
+                        required
+                    >
+
+                        <option value="">
+                            Pilih anggota
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label
+                        for="attendanceDate"
+                    >
+                        Tanggal
+                    </label>
+
                     <input
-                        type="text"
-                        id="memberName"
-                        placeholder="Contoh: Rivano"
-                        autocomplete="off"
+                        type="date"
+                        id="attendanceDate"
                         required
                     >
 
                 </div>
 
 
-                <button
-                    class="primary-button full"
-                    type="submit"
-                >
-                    + Tambahkan
-                </button>
+                <div class="form-group">
+
+                    <label>
+                        Status Kehadiran
+                    </label>
+
+
+                    <div class="status-options">
+
+
+                        <label
+                            class="status-option hadir"
+                        >
+
+                            <input
+                                type="radio"
+                                name="status"
+                                value="hadir"
+                            >
+
+                            <span>
+                                ✓
+                            </span>
+
+                            <strong>
+                                Hadir
+                            </strong>
+
+                        </label>
+
+
+                        <label
+                            class="status-option izin"
+                        >
+
+                            <input
+                                type="radio"
+                                name="status"
+                                value="izin"
+                            >
+
+                            <span>
+                                i
+                            </span>
+
+                            <strong>
+                                Izin
+                            </strong>
+
+                        </label>
+
+
+                        <label
+                            class="status-option sakit"
+                        >
+
+                            <input
+                                type="radio"
+                                name="status"
+                                value="sakit"
+                            >
+
+                            <span>
+                                +
+                            </span>
+
+                            <strong>
+                                Sakit
+                            </strong>
+
+                        </label>
+
+
+                        <label
+                            class="status-option alpa"
+                        >
+
+                            <input
+                                type="radio"
+                                name="status"
+                                value="alpa"
+                            >
+
+                            <span>
+                                !
+                            </span>
+
+                            <strong>
+                                Alpa
+                            </strong>
+
+                        </label>
+
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label
+                        for="attendanceNote"
+                    >
+                        Catatan
+                        <small>
+                            (opsional)
+                        </small>
+                    </label>
+
+                    <textarea
+                        id="attendanceNote"
+                        rows="4"
+                        placeholder="Tulis catatan jika diperlukan..."
+                    ></textarea>
+
+                </div>
+
+
+                <div class="form-actions">
+
+                    <button
+                        type="submit"
+                        class="primary-button"
+                    >
+                        ✓ Simpan Absensi
+                    </button>
+
+                    <button
+                        type="button"
+                        class="secondary-button"
+                        onclick="formResetAttendance()"
+                    >
+                        Reset
+                    </button>
+
+                </div>
 
             </form>
 
         </div>
 
-    </div>
+    </section>
 
 
+    <!-- =================================================
+         MEMBERS
+    ================================================= -->
 
-    <!-- =====================================================
-         TOAST
-    ====================================================== -->
-
-    <div
-        id="toast"
-        class="toast"
+    <section
+        id="members"
+        class="page"
     >
 
-        <div class="toast-icon">
-            ✓
+        <div class="page-heading">
+
+            <div>
+
+                <span class="eyebrow">
+                    DATA ANGGOTA
+                </span>
+
+                <h2>
+                    Kelola Anggota
+                </h2>
+
+                <p>
+                    Tambahkan dan kelola daftar
+                    anggota ABSEN 577.
+                </p>
+
+            </div>
+
+            <button
+                id="openMemberModal"
+                class="primary-button"
+                type="button"
+            >
+                + Tambah Anggota
+            </button>
+
         </div>
 
-        <div class="toast-content">
 
-            <strong id="toastTitle">
-                Berhasil
-            </strong>
+        <div class="content-card">
 
-            <p id="toastMessage">
-                -
-            </p>
+            <div class="table-wrapper">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                #
+                            </th>
+
+                            <th>
+                                Nama Anggota
+                            </th>
+
+                            <th>
+                                Total Absensi
+                            </th>
+
+                            <th>
+                                Aksi
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody
+                        id="membersTableBody"
+                    ></tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =================================================
+         HISTORY
+    ================================================= -->
+
+    <section
+        id="history"
+        class="page"
+    >
+
+        <div class="page-heading">
+
+            <div>
+
+                <span class="eyebrow">
+                    RIWAYAT
+                </span>
+
+                <h2>
+                    Riwayat Absensi
+                </h2>
+
+                <p>
+                    Lihat seluruh data kehadiran.
+                </p>
+
+            </div>
+
+            <button
+                id="exportButton"
+                class="primary-button"
+                type="button"
+            >
+                ↓ Export CSV
+            </button>
 
         </div>
 
 
-        <button
-            id="closeToast"
-            type="button"
-        >
-            ×
-        </button>
+        <div class="content-card">
+
+            <div class="filters">
+
+                <div class="search-box">
+
+                    <span>
+                        🔎
+                    </span>
+
+                    <input
+                        type="search"
+                        id="searchAttendance"
+                        placeholder="Cari nama anggota..."
+                    >
+
+                </div>
+
+
+                <div>
+
+                    <input
+                        type="date"
+                        id="filterDate"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="table-wrapper">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                #
+                            </th>
+
+                            <th>
+                                Nama
+                            </th>
+
+                            <th>
+                                Tanggal
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th>
+                                Catatan
+                            </th>
+
+                            <th>
+                                Aksi
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody
+                        id="attendanceTableBody"
+                    ></tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<!-- =====================================================
+     MEMBER MODAL
+===================================================== -->
+
+<div
+    id="memberModal"
+    class="modal"
+>
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+
+            <div>
+
+                <h2>
+                    Tambah Anggota
+                </h2>
+
+                <p>
+                    Masukkan nama anggota baru.
+                </p>
+
+            </div>
+
+            <button
+                id="closeMemberModal"
+                class="modal-close"
+                type="button"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <form id="memberForm">
+
+            <div class="form-group">
+
+                <label
+                    for="memberName"
+                >
+                    Nama Anggota
+                </label>
+
+                <input
+                    type="text"
+                    id="memberName"
+                    placeholder="Contoh: Rivano"
+                    autocomplete="off"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-actions">
+
+                <button
+                    type="submit"
+                    class="primary-button"
+                >
+                    + Tambahkan
+                </button>
+
+                <button
+                    type="button"
+                    class="secondary-button"
+                    onclick="closeMemberModal()"
+                >
+                    Batal
+                </button>
+
+            </div>
+
+        </form>
 
     </div>
 
+</div>
 
-    <script src="script.js"></script>
+
+<!-- =====================================================
+     TOAST
+===================================================== -->
+
+<div
+    id="toast"
+    class="toast"
+>
+
+    <div
+        id="toastIcon"
+        class="toast-icon"
+    >
+        ✓
+    </div>
+
+    <div
+        id="toastMessage"
+        class="toast-message"
+    >
+        Berhasil
+    </div>
+
+    <button
+        type="button"
+        onclick="closeToast()"
+    >
+        ×
+    </button>
+
+</div>
+
+
+<!-- =====================================================
+     SCRIPT
+===================================================== -->
+
+<script
+    src="script.js"
+    defer
+></script>
 
 </body>
+
 </html>
